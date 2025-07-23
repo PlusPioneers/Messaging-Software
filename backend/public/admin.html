@@ -5,6 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Admin Dashboard</title>
     <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --danger-color: #dc2626;
+            --background-color: #f8fafc;
+            --surface-color: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,317 +28,487 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--primary-color);
             color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow-lg);
         }
         
         .header-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
         .header h1 {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
         
         .stats {
             display: flex;
-            gap: 20px;
-            font-size: 14px;
+            gap: 1.5rem;
+            font-size: 0.875rem;
         }
         
         .stat-item {
-            background: rgba(255,255,255,0.2);
-            padding: 10px 15px;
-            border-radius: 20px;
+            background: rgba(255,255,255,0.15);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
             text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
         }
         
         .container {
             max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 20px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
         }
         
         .controls {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
             display: flex;
-            gap: 15px;
+            gap: 1rem;
             flex-wrap: wrap;
-            align-items: center;
+            align-items: end;
         }
         
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 0.5rem;
+            min-width: 150px;
         }
         
         .control-group label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
         }
         
         .control-group select,
         .control-group input {
-            padding: 8px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 14px;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .control-group select:focus,
+        .control-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
         }
         
         .btn {
-            padding: 10px 20px;
+            padding: 0.5rem 1rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 0.375rem;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .btn-primary {
-            background: #007bff;
+            background: var(--primary-color);
             color: white;
         }
         
         .btn-primary:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+        }
+        
+        .view-toggle {
+            display: flex;
+            background: var(--border-color);
+            border-radius: 0.375rem;
+            padding: 0.25rem;
+        }
+        
+        .view-toggle button {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .view-toggle button.active {
+            background: var(--surface-color);
+            box-shadow: var(--shadow);
         }
         
         .bookings-container {
-            background: white;
-            border-radius: 10px;
+            background: var(--surface-color);
+            border-radius: 0.75rem;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
         }
         
         .bookings-header {
-            background: linear-gradient(45deg, #28a745, #20c997);
+            background: var(--success-color);
             color: white;
-            padding: 20px;
+            padding: 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
+        .bookings-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        /* Table View Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .bookings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .bookings-table th,
+        .bookings-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .bookings-table th {
+            background: var(--background-color);
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .bookings-table tbody tr {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .bookings-table tbody tr:hover {
+            background: var(--background-color);
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+        
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-badge.confirmed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-badge.cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-badge.completed {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+        
+        /* Card View Styles */
         .bookings-grid {
             display: grid;
             gap: 1px;
-            background: #e9ecef;
+            background: var(--border-color);
         }
         
         .booking-card {
-            background: white;
-            padding: 20px;
-            transition: all 0.3s ease;
-            border-left: 4px solid #e9ecef;
+            background: var(--surface-color);
+            padding: 1.5rem;
+            transition: all 0.2s;
+            border-left: 4px solid var(--border-color);
         }
         
         .booking-card:hover {
-            background: #f8f9fa;
-            transform: translateX(5px);
+            background: var(--background-color);
         }
         
         .booking-card.pending {
-            border-left-color: #ffc107;
+            border-left-color: var(--warning-color);
         }
         
         .booking-card.confirmed {
-            border-left-color: #28a745;
+            border-left-color: var(--success-color);
         }
         
         .booking-card.cancelled {
-            border-left-color: #dc3545;
+            border-left-color: var(--danger-color);
             opacity: 0.7;
         }
         
         .booking-card.completed {
-            border-left-color: #6f42c1;
+            border-left-color: var(--primary-color);
         }
         
         .booking-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
         }
         
         .customer-info h3 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 5px;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
         }
         
         .customer-info p {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .status-badge.pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-badge.confirmed {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-badge.cancelled {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .status-badge.completed {
-            background: #e2e3f1;
-            color: #383d41;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
         }
         
         .booking-details {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 1rem;
+            margin-bottom: 1rem;
         }
         
         .detail-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: #555;
-            font-size: 14px;
-        }
-        
-        .detail-icon {
-            font-size: 16px;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
         }
         
         .booking-notes {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 6px;
+            background: var(--background-color);
+            padding: 0.75rem;
+            border-radius: 0.375rem;
             font-style: italic;
-            color: #666;
-            margin-bottom: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
         }
         
         .booking-actions {
             display: flex;
-            gap: 8px;
+            gap: 0.5rem;
             flex-wrap: wrap;
         }
         
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
             transition: all 0.3s ease;
         }
         
-        .btn-success {
-            background: #28a745;
-            color: white;
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
         
-        .btn-danger {
-            background: #dc3545;
-            color: white;
+        .modal {
+            background: var(--surface-color);
+            border-radius: 0.75rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
         }
         
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
+        .modal-overlay.active .modal {
+            transform: scale(1);
         }
         
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .btn-sm:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        .modal-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            transition: background-color 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: var(--background-color);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-field {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-field label {
+            display: block;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .modal-field-value {
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .modal-actions {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
         }
         
         .loading {
             text-align: center;
-            padding: 40px;
-            color: #666;
+            padding: 3rem;
+            color: var(--text-secondary);
         }
         
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: #666;
+            padding: 4rem 1.5rem;
+            color: var(--text-secondary);
         }
         
         .empty-state h3 {
-            font-size: 24px;
-            margin-bottom: 10px;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
         }
         
         .refresh-btn {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3.5rem;
+            height: 3.5rem;
             border-radius: 50%;
-            background: #007bff;
+            background: var(--primary-color);
             color: white;
             border: none;
             cursor: pointer;
-            font-size: 20px;
-            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
-            transition: all 0.3s ease;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.2s;
         }
         
         .refresh-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,123,255,0.4);
+            background: var(--primary-dark);
+            transform: translateY(-2px);
         }
         
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
-                gap: 15px;
+                gap: 1rem;
+            }
+            
+            .stats {
+                flex-wrap: wrap;
+                justify-content: center;
             }
             
             .controls {
                 flex-direction: column;
                 align-items: stretch;
+            }
+            
+            .control-group {
+                min-width: auto;
             }
             
             .booking-details {
@@ -331,8 +517,17 @@
             
             .booking-header {
                 flex-direction: column;
-                gap: 10px;
+                gap: 0.75rem;
                 align-items: stretch;
+            }
+            
+            .bookings-table {
+                font-size: 0.875rem;
+            }
+            
+            .bookings-table th,
+            .bookings-table td {
+                padding: 0.75rem 0.5rem;
             }
         }
     </style>
@@ -340,18 +535,18 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>📊 Booking Admin Dashboard</h1>
+            <h1>Booking Admin Dashboard</h1>
             <div class="stats">
                 <div class="stat-item">
-                    <div id="totalBookings">0</div>
+                    <div class="stat-value" id="totalBookings">0</div>
                     <div>Total Bookings</div>
                 </div>
                 <div class="stat-item">
-                    <div id="todayBookings">0</div>
+                    <div class="stat-value" id="todayBookings">0</div>
                     <div>Today</div>
                 </div>
                 <div class="stat-item">
-                    <div id="pendingBookings">0</div>
+                    <div class="stat-value" id="pendingBookings">0</div>
                     <div>Pending</div>
                 </div>
             </div>
@@ -386,13 +581,25 @@
                 </select>
             </div>
             
-            <button class="btn btn-primary" onclick="loadBookings()">
-                🔍 Apply Filters
-            </button>
+            <div class="control-group">
+                <label>View</label>
+                <div class="view-toggle">
+                    <button id="tableViewBtn" class="active">Table</button>
+                    <button id="cardViewBtn">Cards</button>
+                </div>
+            </div>
             
-            <button class="btn btn-primary" onclick="clearFilters()">
-                🧹 Clear All
-            </button>
+            <div class="control-group">
+                <button class="btn btn-primary" onclick="loadBookings()">
+                    Apply Filters
+                </button>
+            </div>
+            
+            <div class="control-group">
+                <button class="btn btn-secondary" onclick="clearFilters()">
+                    Clear All
+                </button>
+            </div>
         </div>
         
         <div class="bookings-container">
@@ -401,7 +608,7 @@
                 <span id="bookingCount">0 bookings found</span>
             </div>
             
-            <div id="bookingsContainer" class="bookings-grid">
+            <div id="bookingsContainer">
                 <div class="loading">
                     <h3>Loading bookings...</h3>
                     <p>Please wait while we fetch your data.</p>
@@ -411,22 +618,60 @@
     </div>
     
     <button class="refresh-btn" onclick="loadBookings()" title="Refresh Data">
-        🔄
+        ↻
     </button>
+
+    <!-- Modal for booking details -->
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Booking Details</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+            <div class="modal-actions" id="modalActions">
+                <!-- Actions will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
 
     <script>
         // Configuration
-        const API_BASE_URL = 'https://messaging-software-production.up.railway.app'; // Change this when you deploy
+        const API_BASE_URL = 'https://messaging-software-production.up.railway.app';
         
         let allBookings = [];
+        let currentView = 'table';
         
         // Load bookings when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadBookings();
+            setupViewToggle();
             
             // Auto-refresh every 30 seconds
             setInterval(loadBookings, 30000);
         });
+        
+        // Setup view toggle functionality
+        function setupViewToggle() {
+            const tableBtn = document.getElementById('tableViewBtn');
+            const cardBtn = document.getElementById('cardViewBtn');
+            
+            tableBtn.addEventListener('click', () => {
+                currentView = 'table';
+                tableBtn.classList.add('active');
+                cardBtn.classList.remove('active');
+                displayBookings(getFilteredBookings());
+            });
+            
+            cardBtn.addEventListener('click', () => {
+                currentView = 'cards';
+                cardBtn.classList.add('active');
+                tableBtn.classList.remove('active');
+                displayBookings(getFilteredBookings());
+            });
+        }
         
         // Load bookings from API
         async function loadBookings() {
@@ -452,9 +697,9 @@
                 console.error('Error loading bookings:', error);
                 document.getElementById('bookingsContainer').innerHTML = `
                     <div class="empty-state">
-                        <h3>⚠️ Error Loading Data</h3>
+                        <h3>Error Loading Data</h3>
                         <p>Unable to load bookings: ${error.message}</p>
-                        <button class="btn btn-primary" onclick="loadBookings()" style="margin-top: 15px;">
+                        <button class="btn btn-primary" onclick="loadBookings()" style="margin-top: 1rem;">
                             Try Again
                         </button>
                     </div>
@@ -472,15 +717,65 @@
             if (bookings.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <h3>📅 No Bookings Found</h3>
+                        <h3>No Bookings Found</h3>
                         <p>There are no bookings matching your current filters.</p>
                     </div>
                 `;
                 return;
             }
             
-            const html = bookings.map(booking => createBookingCard(booking)).join('');
-            container.innerHTML = html;
+            if (currentView === 'table') {
+                container.innerHTML = createTableView(bookings);
+            } else {
+                container.innerHTML = createCardView(bookings);
+            }
+        }
+        
+        // Create table view
+        function createTableView(bookings) {
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="bookings-table">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Service</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${bookings.map(booking => `
+                                <tr onclick="openBookingModal(${booking.id})" data-id="${booking.id}">
+                                    <td>
+                                        <div>
+                                            <div style="font-weight: 500;">${booking.customer_name}</div>
+                                            <div style="font-size: 0.875rem; color: var(--text-secondary);">${booking.customer_email}</div>
+                                        </div>
+                                    </td>
+                                    <td style="text-transform: capitalize;">${booking.service_type}</td>
+                                    <td>${new Date(booking.appointment_date).toLocaleDateString()}</td>
+                                    <td>${booking.appointment_time}</td>
+                                    <td><span class="status-badge ${booking.status}">${booking.status}</span></td>
+                                    <td>${new Date(booking.created_at).toLocaleDateString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            return tableHTML;
+        }
+        
+        // Create card view
+        function createCardView(bookings) {
+            return `
+                <div class="bookings-grid">
+                    ${bookings.map(booking => createBookingCard(booking)).join('')}
+                </div>
+            `;
         }
         
         // Create HTML for a single booking card
@@ -489,32 +784,32 @@
             const createdDate = new Date(booking.created_at).toLocaleDateString();
             
             return `
-                <div class="booking-card ${booking.status}" data-id="${booking.id}">
+                <div class="booking-card ${booking.status}" data-id="${booking.id}" onclick="openBookingModal(${booking.id})">
                     <div class="booking-header">
                         <div class="customer-info">
                             <h3>${booking.customer_name}</h3>
-                            <p>📧 ${booking.customer_email}</p>
-                            ${booking.customer_phone ? `<p>📱 ${booking.customer_phone}</p>` : ''}
+                            <p>${booking.customer_email}</p>
+                            ${booking.customer_phone ? `<p>${booking.customer_phone}</p>` : ''}
                         </div>
                         <span class="status-badge ${booking.status}">${booking.status}</span>
                     </div>
                     
                     <div class="booking-details">
                         <div class="detail-item">
-                            <span class="detail-icon">🔧</span>
-                            <span>${booking.service_type}</span>
+                            <span>Service:</span>
+                            <span style="text-transform: capitalize;">${booking.service_type}</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-icon">📅</span>
+                            <span>Date:</span>
                             <span>${date}</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-icon">🕐</span>
+                            <span>Time:</span>
                             <span>${booking.appointment_time}</span>
                         </div>
                         <div class="detail-item">
-                            <span class="detail-icon">📝</span>
-                            <span>Created: ${createdDate}</span>
+                            <span>Created:</span>
+                            <span>${createdDate}</span>
                         </div>
                     </div>
                     
@@ -523,35 +818,111 @@
                             <strong>Notes:</strong> ${booking.notes}
                         </div>
                     ` : ''}
-                    
-                    <div class="booking-actions">
-                        ${booking.status === 'pending' ? `
-                            <button class="btn-sm btn-success" onclick="updateBookingStatus(${booking.id}, 'confirmed')">
-                                ✅ Confirm
-                            </button>
-                        ` : ''}
-                        
-                        ${booking.status !== 'cancelled' && booking.status !== 'completed' ? `
-                            <button class="btn-sm btn-danger" onclick="updateBookingStatus(${booking.id}, 'cancelled')">
-                                ❌ Cancel
-                            </button>
-                        ` : ''}
-                        
-                        ${booking.status === 'confirmed' ? `
-                            <button class="btn-sm btn-secondary" onclick="updateBookingStatus(${booking.id}, 'completed')">
-                                ✔️ Mark Complete
-                            </button>
-                        ` : ''}
-                        
-                        ${booking.status === 'cancelled' || booking.status === 'completed' ? `
-                            <button class="btn-sm btn-warning" onclick="updateBookingStatus(${booking.id}, 'pending')">
-                                🔄 Reactivate
-                            </button>
-                        ` : ''}
-                    </div>
                 </div>
             `;
         }
+        
+        // Open booking modal
+        function openBookingModal(bookingId) {
+            const booking = allBookings.find(b => b.id === bookingId);
+            if (!booking) return;
+            
+            const modal = document.getElementById('bookingModal');
+            const modalBody = document.getElementById('modalBody');
+            const modalActions = document.getElementById('modalActions');
+            
+            // Populate modal content
+            modalBody.innerHTML = `
+                <div class="modal-field">
+                    <label>Customer Name</label>
+                    <div class="modal-field-value">${booking.customer_name}</div>
+                </div>
+                <div class="modal-field">
+                    <label>Email Address</label>
+                    <div class="modal-field-value">${booking.customer_email}</div>
+                </div>
+                ${booking.customer_phone ? `
+                    <div class="modal-field">
+                        <label>Phone Number</label>
+                        <div class="modal-field-value">${booking.customer_phone}</div>
+                    </div>
+                ` : ''}
+                <div class="modal-field">
+                    <label>Service Type</label>
+                    <div class="modal-field-value" style="text-transform: capitalize;">${booking.service_type}</div>
+                </div>
+                <div class="modal-field">
+                    <label>Appointment Date</label>
+                    <div class="modal-field-value">${new Date(booking.appointment_date).toLocaleDateString()}</div>
+                </div>
+                <div class="modal-field">
+                    <label>Appointment Time</label>
+                    <div class="modal-field-value">${booking.appointment_time}</div>
+                </div>
+                <div class="modal-field">
+                    <label>Status</label>
+                    <div class="modal-field-value">
+                        <span class="status-badge ${booking.status}">${booking.status}</span>
+                    </div>
+                </div>
+                <div class="modal-field">
+                    <label>Created At</label>
+                    <div class="modal-field-value">${new Date(booking.created_at).toLocaleString()}</div>
+                </div>
+                ${booking.notes ? `
+                    <div class="modal-field">
+                        <label>Notes</label>
+                        <div class="modal-field-value">${booking.notes}</div>
+                    </div>
+                ` : ''}
+            `;
+            
+            // Populate modal actions
+            modalActions.innerHTML = `
+                ${booking.status === 'pending' ? `
+                    <button class="btn btn-success btn-sm" onclick="updateBookingStatus(${booking.id}, 'confirmed')">
+                        Confirm
+                    </button>
+                ` : ''}
+                
+                ${booking.status !== 'cancelled' && booking.status !== 'completed' ? `
+                    <button class="btn btn-danger btn-sm" onclick="updateBookingStatus(${booking.id}, 'cancelled')">
+                        Cancel
+                    </button>
+                ` : ''}
+                
+                ${booking.status === 'confirmed' ? `
+                    <button class="btn btn-secondary btn-sm" onclick="updateBookingStatus(${booking.id}, 'completed')">
+                        Mark Complete
+                    </button>
+                ` : ''}
+                
+                ${booking.status === 'cancelled' || booking.status === 'completed' ? `
+                    <button class="btn btn-warning btn-sm" onclick="updateBookingStatus(${booking.id}, 'pending')">
+                        Reactivate
+                    </button>
+                ` : ''}
+                
+                <button class="btn btn-secondary btn-sm" onclick="closeModal()">
+                    Close
+                </button>
+            `;
+            
+            modal.classList.add('active');
+        }
+        
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('bookingModal');
+            modal.classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('bookingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
         
         // Update booking status
         async function updateBookingStatus(bookingId, newStatus) {
@@ -577,6 +948,7 @@
                         booking.status = newStatus;
                         displayBookings(getFilteredBookings());
                         updateStats();
+                        closeModal();
                     }
                     
                     // Show success feedback
@@ -653,21 +1025,22 @@
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                padding: 15px 20px;
-                border-radius: 6px;
+                padding: 1rem 1.25rem;
+                border-radius: 0.5rem;
                 color: white;
-                font-weight: 600;
-                z-index: 1000;
-                animation: slideIn 0.3s ease;
+                font-weight: 500;
+                z-index: 1001;
                 max-width: 300px;
+                box-shadow: var(--shadow-lg);
+                animation: slideInNotification 0.3s ease;
             `;
             
             if (type === 'success') {
-                notification.style.background = '#28a745';
+                notification.style.background = 'var(--success-color)';
             } else if (type === 'error') {
-                notification.style.background = '#dc3545';
+                notification.style.background = 'var(--danger-color)';
             } else {
-                notification.style.background = '#007bff';
+                notification.style.background = 'var(--primary-color)';
             }
             
             notification.textContent = message;
@@ -678,6 +1051,22 @@
                 notification.remove();
             }, 3000);
         }
+        
+        // Add CSS animation for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInNotification {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
         
         console.log('Admin dashboard loaded successfully!');
         console.log('API Base URL:', API_BASE_URL);

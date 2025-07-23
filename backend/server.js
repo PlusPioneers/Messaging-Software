@@ -58,7 +58,7 @@ const transporter = nodemailer.createTransport({
     secure: false,
     auth: {
         user: 'essstellers@gmail.com', // Replace with your Gmail
-        pass: 'thahir2005@'     // Replace with Gmail App Password
+        pass: 'your-app-password'     // Replace with Gmail App Password
     }
 });
 
@@ -139,15 +139,15 @@ app.post('/api/bookings', (req, res) => {
 
                     // Send confirmation email (optional - may fail if email not configured)
                     const mailOptions = {
-                        from: 'your-email@gmail.com',
+                        from: 'essstellers@gmail.com',
                         to: customerEmail,
                         subject: 'Appointment Confirmation',
                         html: `
                             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                                <h2 style="color: #333;">Appointment Confirmed</h2>
+                                <h2 style="color: #1e293b;">Appointment Confirmed</h2>
                                 <p>Dear <strong>${customerName}</strong>,</p>
                                 <p>Your appointment has been successfully booked with the following details:</p>
-                                <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #2563eb;">
                                     <ul style="list-style: none; padding: 0;">
                                         <li><strong>Service:</strong> ${serviceType}</li>
                                         <li><strong>Date:</strong> ${appointmentDate}</li>
@@ -156,7 +156,7 @@ app.post('/api/bookings', (req, res) => {
                                     </ul>
                                 </div>
                                 <p>We look forward to seeing you!</p>
-                                <p style="font-size: 12px; color: #666;">
+                                <p style="font-size: 12px; color: #64748b;">
                                     If you need to cancel or reschedule, please contact us as soon as possible.
                                 </p>
                             </div>
@@ -280,9 +280,10 @@ app.get('/api/available-slots/:date', (req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📊 Admin panel will be available at http://localhost:${PORT}/admin`);
-    console.log(`🎯 API test endpoint: http://localhost:${PORT}/api/test`);
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Admin panel available at http://localhost:${PORT}/admin.html`);
+    console.log(`Booking widget available at http://localhost:${PORT}/booking-widget.html`);
+    console.log(`API test endpoint: http://localhost:${PORT}/api/test`);
 });
 
 // Gracefully close database connection on exit
