@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking Admin Dashboard</title>
+    <title>Medical Booking Admin Dashboard</title>
     <style>
         :root {
             --primary-color: #2563eb;
@@ -42,7 +42,7 @@
         }
         
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 1.5rem;
             display: flex;
@@ -76,9 +76,48 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 2rem auto;
             padding: 0 1.5rem;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: var(--surface-color);
+            border-radius: 0.75rem;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            gap: 0.5rem;
+        }
+        
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: var(--text-secondary);
+        }
+        
+        .nav-tab.active {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+        
+        .nav-tab:hover:not(.active) {
+            background: var(--background-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
         
         .controls {
@@ -169,36 +208,14 @@
             font-size: 0.75rem;
         }
         
-        .view-toggle {
-            display: flex;
-            background: var(--border-color);
-            border-radius: 0.375rem;
-            padding: 0.25rem;
-        }
-        
-        .view-toggle button {
-            padding: 0.5rem 1rem;
-            border: none;
-            background: transparent;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-        }
-        
-        .view-toggle button.active {
-            background: var(--surface-color);
-            box-shadow: var(--shadow);
-        }
-        
-        .bookings-container {
+        .data-container {
             background: var(--surface-color);
             border-radius: 0.75rem;
             overflow: hidden;
             box-shadow: var(--shadow);
         }
         
-        .bookings-header {
+        .data-header {
             background: var(--success-color);
             color: white;
             padding: 1.5rem;
@@ -207,29 +224,28 @@
             align-items: center;
         }
         
-        .bookings-header h2 {
+        .data-header h2 {
             font-size: 1.25rem;
             font-weight: 600;
         }
         
-        /* Table View Styles */
         .table-container {
             overflow-x: auto;
         }
         
-        .bookings-table {
+        .data-table {
             width: 100%;
             border-collapse: collapse;
         }
         
-        .bookings-table th,
-        .bookings-table td {
+        .data-table th,
+        .data-table td {
             padding: 1rem;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
         
-        .bookings-table th {
+        .data-table th {
             background: var(--background-color);
             font-weight: 600;
             color: var(--text-secondary);
@@ -238,12 +254,12 @@
             letter-spacing: 0.05em;
         }
         
-        .bookings-table tbody tr {
+        .data-table tbody tr {
             cursor: pointer;
             transition: background-color 0.2s;
         }
         
-        .bookings-table tbody tr:hover {
+        .data-table tbody tr:hover {
             background: var(--background-color);
         }
         
@@ -253,11 +269,6 @@
             font-size: 0.75rem;
             font-weight: 500;
             text-transform: capitalize;
-        }
-        
-        .status-badge.pending {
-            background: #fef3c7;
-            color: #92400e;
         }
         
         .status-badge.confirmed {
@@ -275,87 +286,18 @@
             color: #3730a3;
         }
         
-        /* Card View Styles */
-        .bookings-grid {
-            display: grid;
-            gap: 1px;
-            background: var(--border-color);
+        .status-badge.needs_followup {
+            background: #fef3c7;
+            color: #92400e;
         }
         
-        .booking-card {
-            background: var(--surface-color);
-            padding: 1.5rem;
-            transition: all 0.2s;
-            border-left: 4px solid var(--border-color);
-        }
-        
-        .booking-card:hover {
-            background: var(--background-color);
-        }
-        
-        .booking-card.pending {
-            border-left-color: var(--warning-color);
-        }
-        
-        .booking-card.confirmed {
-            border-left-color: var(--success-color);
-        }
-        
-        .booking-card.cancelled {
-            border-left-color: var(--danger-color);
-            opacity: 0.7;
-        }
-        
-        .booking-card.completed {
-            border-left-color: var(--primary-color);
-        }
-        
-        .booking-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-        
-        .customer-info h3 {
-            font-size: 1.125rem;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-        
-        .customer-info p {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-        
-        .booking-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-        
-        .booking-notes {
-            background: var(--background-color);
-            padding: 0.75rem;
-            border-radius: 0.375rem;
-            font-style: italic;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-        
-        .booking-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
+        .followup-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
         }
         
         /* Modal Styles */
@@ -383,7 +325,7 @@
         .modal {
             background: var(--surface-color);
             border-radius: 0.75rem;
-            max-width: 600px;
+            max-width: 700px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
@@ -445,12 +387,22 @@
             font-size: 1rem;
         }
         
+        .modal-field input,
+        .modal-field select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            font-size: 1rem;
+        }
+        
         .modal-actions {
             padding: 1.5rem;
             border-top: 1px solid var(--border-color);
             display: flex;
             gap: 0.75rem;
             justify-content: flex-end;
+            flex-wrap: wrap;
         }
         
         .loading {
@@ -491,6 +443,62 @@
             transform: translateY(-2px);
         }
         
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            font-size: 1rem;
+        }
+        
+        .availability-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .day-availability {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--background-color);
+            border-radius: 0.5rem;
+        }
+        
+        .day-checkbox {
+            min-width: 120px;
+        }
+        
+        .time-inputs {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .time-inputs input {
+            width: 100px;
+        }
+        
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -511,22 +519,20 @@
                 min-width: auto;
             }
             
-            .booking-details {
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .form-grid {
                 grid-template-columns: 1fr;
             }
             
-            .booking-header {
-                flex-direction: column;
-                gap: 0.75rem;
-                align-items: stretch;
-            }
-            
-            .bookings-table {
+            .data-table {
                 font-size: 0.875rem;
             }
             
-            .bookings-table th,
-            .bookings-table td {
+            .data-table th,
+            .data-table td {
                 padding: 0.75rem 0.5rem;
             }
         }
@@ -535,7 +541,7 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>Booking Admin Dashboard</h1>
+            <h1>Medical Booking Admin Dashboard</h1>
             <div class="stats">
                 <div class="stat-item">
                     <div class="stat-value" id="totalBookings">0</div>
@@ -546,93 +552,246 @@
                     <div>Today</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value" id="pendingBookings">0</div>
-                    <div>Pending</div>
+                    <div class="stat-value" id="followupBookings">0</div>
+                    <div>Follow-ups</div>
                 </div>
             </div>
         </div>
     </div>
     
     <div class="container">
-        <div class="controls">
-            <div class="control-group">
-                <label>Filter by Status</label>
-                <select id="statusFilter">
-                    <option value="">All Statuses</option>
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="cancelled">Cancelled</option>
-                    <option value="completed">Completed</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label>Filter by Date</label>
-                <input type="date" id="dateFilter">
-            </div>
-            
-            <div class="control-group">
-                <label>Service Type</label>
-                <select id="serviceFilter">
-                    <option value="">All Services</option>
-                    <option value="consultation">Consultation</option>
-                    <option value="followup">Follow-up</option>
-                    <option value="assessment">Assessment</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label>View</label>
-                <div class="view-toggle">
-                    <button id="tableViewBtn" class="active">Table</button>
-                    <button id="cardViewBtn">Cards</button>
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('bookings')">Bookings</button>
+            <button class="nav-tab" onclick="showTab('doctors')">Doctors</button>
+            <button class="nav-tab" onclick="showTab('manual-booking')">Manual Booking</button>
+            <button class="nav-tab" onclick="showTab('followups')">Follow-ups</button>
+        </div>
+        
+        <!-- Bookings Tab -->
+        <div id="bookings-tab" class="tab-content active">
+            <div class="controls">
+                <div class="control-group">
+                    <label>Search</label>
+                    <input type="text" id="searchInput" placeholder="Name, phone, or reference">
+                </div>
+                
+                <div class="control-group">
+                    <label>Filter by Status</label>
+                    <select id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="completed">Completed</option>
+                        <option value="needs_followup">Needs Follow-up</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>Filter by Date</label>
+                    <input type="date" id="dateFilter">
+                </div>
+                
+                <div class="control-group">
+                    <label>Filter by Doctor</label>
+                    <select id="doctorFilter">
+                        <option value="">All Doctors</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <button class="btn btn-primary" onclick="loadBookings()">Apply Filters</button>
+                </div>
+                
+                <div class="control-group">
+                    <button class="btn btn-secondary" onclick="clearFilters()">Clear All</button>
+                </div>
+                
+                <div class="control-group">
+                    <button class="btn btn-success" onclick="exportBookings()">Export CSV</button>
                 </div>
             </div>
             
-            <div class="control-group">
-                <button class="btn btn-primary" onclick="loadBookings()">
-                    Apply Filters
-                </button>
-            </div>
-            
-            <div class="control-group">
-                <button class="btn btn-secondary" onclick="clearFilters()">
-                    Clear All
-                </button>
+            <div class="data-container">
+                <div class="data-header">
+                    <h2>Appointment Bookings</h2>
+                    <span id="bookingCount">0 bookings found</span>
+                </div>
+                
+                <div id="bookingsContainer">
+                    <div class="loading">
+                        <h3>Loading bookings...</h3>
+                        <p>Please wait while we fetch your data.</p>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="bookings-container">
-            <div class="bookings-header">
-                <h2>Recent Bookings</h2>
-                <span id="bookingCount">0 bookings found</span>
+        <!-- Doctors Tab -->
+        <div id="doctors-tab" class="tab-content">
+            <div class="controls">
+                <div class="control-group">
+                    <button class="btn btn-primary" onclick="showAddDoctorModal()">Add New Doctor</button>
+                </div>
             </div>
             
-            <div id="bookingsContainer">
-                <div class="loading">
-                    <h3>Loading bookings...</h3>
-                    <p>Please wait while we fetch your data.</p>
+            <div class="data-container">
+                <div class="data-header">
+                    <h2>Doctor Management</h2>
+                    <span id="doctorCount">0 doctors</span>
+                </div>
+                
+                <div id="doctorsContainer">
+                    <div class="loading">
+                        <h3>Loading doctors...</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Manual Booking Tab -->
+        <div id="manual-booking-tab" class="tab-content">
+            <div class="data-container">
+                <div class="data-header">
+                    <h2>Manual Appointment Entry</h2>
+                    <span>Add appointments for walk-in or phone bookings</span>
+                </div>
+                
+                <div style="padding: 2rem;">
+                    <form id="manualBookingForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Patient Name *</label>
+                                <input type="text" name="patientName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Phone Number *</label>
+                                <input type="tel" name="patientPhone" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" name="patientEmail">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Doctor *</label>
+                                <select name="doctorId" id="manualDoctorSelect" required>
+                                    <option value="">Select a doctor</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Date *</label>
+                                <input type="date" name="appointmentDate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Time *</label>
+                                <select name="appointmentTime" id="manualTimeSelect" required>
+                                    <option value="">Select date and doctor first</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="isFollowup"> This is a follow-up appointment
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea name="notes" rows="3"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Book Appointment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Follow-ups Tab -->
+        <div id="followups-tab" class="tab-content">
+            <div class="data-container">
+                <div class="data-header">
+                    <h2>Follow-up Tracker</h2>
+                    <span id="followupCount">0 follow-ups needed</span>
+                </div>
+                
+                <div id="followupsContainer">
+                    <div class="loading">
+                        <h3>Loading follow-ups...</h3>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <button class="refresh-btn" onclick="loadBookings()" title="Refresh Data">
-        ↻
-    </button>
+    <button class="refresh-btn" onclick="refreshCurrentTab()" title="Refresh Data">↻</button>
 
-    <!-- Modal for booking details -->
+    <!-- Booking Details Modal -->
     <div class="modal-overlay" id="bookingModal">
         <div class="modal">
             <div class="modal-header">
                 <h3>Booking Details</h3>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
+                <button class="modal-close" onclick="closeModal('bookingModal')">&times;</button>
             </div>
-            <div class="modal-body" id="modalBody">
+            <div class="modal-body" id="bookingModalBody">
                 <!-- Content will be populated by JavaScript -->
             </div>
-            <div class="modal-actions" id="modalActions">
+            <div class="modal-actions" id="bookingModalActions">
                 <!-- Actions will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Modal -->
+    <div class="modal-overlay" id="doctorModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="doctorModalTitle">Add Doctor</h3>
+                <button class="modal-close" onclick="closeModal('doctorModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="doctorForm">
+                    <input type="hidden" id="doctorId">
+                    <div class="form-group">
+                        <label>Doctor Name *</label>
+                        <input type="text" id="doctorName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Department/Specialty *</label>
+                        <input type="text" id="doctorDepartment" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact</label>
+                        <input type="text" id="doctorContact">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="saveDoctor()">Save Doctor</button>
+                <button class="btn btn-secondary" onclick="closeModal('doctorModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctor Availability Modal -->
+    <div class="modal-overlay" id="availabilityModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="availabilityModalTitle">Set Doctor Availability</h3>
+                <button class="modal-close" onclick="closeModal('availabilityModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="availability-grid" id="availabilityGrid">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="saveAvailability()">Save Availability</button>
+                <button class="btn btn-secondary" onclick="closeModal('availabilityModal')">Cancel</button>
             </div>
         </div>
     </div>
@@ -642,57 +801,72 @@
         const API_BASE_URL = 'https://messaging-software-production.up.railway.app';
         
         let allBookings = [];
-        let currentView = 'table';
+        let allDoctors = [];
+        let currentTab = 'bookings';
+        let currentDoctorId = null;
         
-        // Load bookings when page loads
+        // Load data when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadBookings();
-            setupViewToggle();
+            loadDoctors();
             
             // Auto-refresh every 30 seconds
-            setInterval(loadBookings, 30000);
+            setInterval(() => {
+                if (currentTab === 'bookings') {
+                    loadBookings();
+                }
+            }, 30000);
         });
         
-        // Setup view toggle functionality
-        function setupViewToggle() {
-            const tableBtn = document.getElementById('tableViewBtn');
-            const cardBtn = document.getElementById('cardViewBtn');
-            
-            tableBtn.addEventListener('click', () => {
-                currentView = 'table';
-                tableBtn.classList.add('active');
-                cardBtn.classList.remove('active');
-                displayBookings(getFilteredBookings());
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
             });
             
-            cardBtn.addEventListener('click', () => {
-                currentView = 'cards';
-                cardBtn.classList.add('active');
-                tableBtn.classList.remove('active');
-                displayBookings(getFilteredBookings());
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
             });
+            
+            // Show selected tab
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+            
+            currentTab = tabName;
+            
+            // Load data for the tab
+            switch(tabName) {
+                case 'bookings':
+                    loadBookings();
+                    break;
+                case 'doctors':
+                    loadDoctors();
+                    break;
+                case 'manual-booking':
+                    loadDoctorsForManualBooking();
+                    break;
+                case 'followups':
+                    loadFollowups();
+                    break;
+            }
         }
         
         // Load bookings from API
         async function loadBookings() {
             try {
-                console.log('Loading bookings...');
                 const response = await fetch(`${API_BASE_URL}/api/bookings`);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
                 const result = await response.json();
                 
                 if (result.success) {
                     allBookings = result.bookings;
                     displayBookings(allBookings);
                     updateStats();
+                    populateDoctorFilter();
                 } else {
                     throw new Error(result.message || 'Failed to load bookings');
                 }
-                
             } catch (error) {
                 console.error('Error loading bookings:', error);
                 document.getElementById('bookingsContainer').innerHTML = `
@@ -707,7 +881,7 @@
             }
         }
         
-        // Display bookings in the UI
+        // Display bookings in table format
         function displayBookings(bookings) {
             const container = document.getElementById('bookingsContainer');
             const countElement = document.getElementById('bookingCount');
@@ -724,26 +898,19 @@
                 return;
             }
             
-            if (currentView === 'table') {
-                container.innerHTML = createTableView(bookings);
-            } else {
-                container.innerHTML = createCardView(bookings);
-            }
-        }
-        
-        // Create table view
-        function createTableView(bookings) {
             const tableHTML = `
                 <div class="table-container">
-                    <table class="bookings-table">
+                    <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Customer</th>
-                                <th>Service</th>
+                                <th>Patient Name</th>
+                                <th>Phone</th>
+                                <th>Doctor</th>
                                 <th>Date</th>
                                 <th>Time</th>
+                                <th>Follow-up</th>
                                 <th>Status</th>
-                                <th>Created</th>
+                                <th>Reference</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -751,123 +918,97 @@
                                 <tr onclick="openBookingModal(${booking.id})" data-id="${booking.id}">
                                     <td>
                                         <div>
-                                            <div style="font-weight: 500;">${booking.customer_name}</div>
-                                            <div style="font-size: 0.875rem; color: var(--text-secondary);">${booking.customer_email}</div>
+                                            <div style="font-weight: 500;">${booking.patient_name}</div>
+                                            ${booking.patient_email ? `<div style="font-size: 0.875rem; color: var(--text-secondary);">${booking.patient_email}</div>` : ''}
                                         </div>
                                     </td>
-                                    <td style="text-transform: capitalize;">${booking.service_type}</td>
+                                    <td>${booking.patient_phone}</td>
+                                    <td>
+                                        <div>
+                                            <div style="font-weight: 500;">${booking.doctor_name}</div>
+                                            <div style="font-size: 0.875rem; color: var(--text-secondary);">${booking.department}</div>
+                                        </div>
+                                    </td>
                                     <td>${new Date(booking.appointment_date).toLocaleDateString()}</td>
-                                    <td>${booking.appointment_time}</td>
-                                    <td><span class="status-badge ${booking.status}">${booking.status}</span></td>
-                                    <td>${new Date(booking.created_at).toLocaleDateString()}</td>
+                                    <td>${formatTime(booking.appointment_time)}</td>
+                                    <td>${booking.is_followup ? '<span class="followup-badge">Yes</span>' : 'No'}</td>
+                                    <td><span class="status-badge ${booking.status}">${booking.status.replace('_', ' ')}</span></td>
+                                    <td style="font-family: monospace;">${booking.booking_reference}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
                 </div>
             `;
-            return tableHTML;
-        }
-        
-        // Create card view
-        function createCardView(bookings) {
-            return `
-                <div class="bookings-grid">
-                    ${bookings.map(booking => createBookingCard(booking)).join('')}
-                </div>
-            `;
-        }
-        
-        // Create HTML for a single booking card
-        function createBookingCard(booking) {
-            const date = new Date(booking.appointment_date).toLocaleDateString();
-            const createdDate = new Date(booking.created_at).toLocaleDateString();
             
-            return `
-                <div class="booking-card ${booking.status}" data-id="${booking.id}" onclick="openBookingModal(${booking.id})">
-                    <div class="booking-header">
-                        <div class="customer-info">
-                            <h3>${booking.customer_name}</h3>
-                            <p>${booking.customer_email}</p>
-                            ${booking.customer_phone ? `<p>${booking.customer_phone}</p>` : ''}
-                        </div>
-                        <span class="status-badge ${booking.status}">${booking.status}</span>
-                    </div>
-                    
-                    <div class="booking-details">
-                        <div class="detail-item">
-                            <span>Service:</span>
-                            <span style="text-transform: capitalize;">${booking.service_type}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Date:</span>
-                            <span>${date}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Time:</span>
-                            <span>${booking.appointment_time}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span>Created:</span>
-                            <span>${createdDate}</span>
-                        </div>
-                    </div>
-                    
-                    ${booking.notes ? `
-                        <div class="booking-notes">
-                            <strong>Notes:</strong> ${booking.notes}
-                        </div>
-                    ` : ''}
-                </div>
-            `;
+            container.innerHTML = tableHTML;
         }
         
-        // Open booking modal
+        // Format time for display
+        function formatTime(time) {
+            const [hours, minutes] = time.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+        
+        // Open booking modal with details
         function openBookingModal(bookingId) {
             const booking = allBookings.find(b => b.id === bookingId);
             if (!booking) return;
             
             const modal = document.getElementById('bookingModal');
-            const modalBody = document.getElementById('modalBody');
-            const modalActions = document.getElementById('modalActions');
+            const modalBody = document.getElementById('bookingModalBody');
+            const modalActions = document.getElementById('bookingModalActions');
             
             // Populate modal content
             modalBody.innerHTML = `
-                <div class="modal-field">
-                    <label>Customer Name</label>
-                    <div class="modal-field-value">${booking.customer_name}</div>
-                </div>
-                <div class="modal-field">
-                    <label>Email Address</label>
-                    <div class="modal-field-value">${booking.customer_email}</div>
-                </div>
-                ${booking.customer_phone ? `
+                <div class="form-grid">
+                    <div class="modal-field">
+                        <label>Patient Name</label>
+                        <div class="modal-field-value">${booking.patient_name}</div>
+                    </div>
                     <div class="modal-field">
                         <label>Phone Number</label>
-                        <div class="modal-field-value">${booking.customer_phone}</div>
+                        <div class="modal-field-value">${booking.patient_phone}</div>
                     </div>
-                ` : ''}
-                <div class="modal-field">
-                    <label>Service Type</label>
-                    <div class="modal-field-value" style="text-transform: capitalize;">${booking.service_type}</div>
-                </div>
-                <div class="modal-field">
-                    <label>Appointment Date</label>
-                    <div class="modal-field-value">${new Date(booking.appointment_date).toLocaleDateString()}</div>
-                </div>
-                <div class="modal-field">
-                    <label>Appointment Time</label>
-                    <div class="modal-field-value">${booking.appointment_time}</div>
-                </div>
-                <div class="modal-field">
-                    <label>Status</label>
-                    <div class="modal-field-value">
-                        <span class="status-badge ${booking.status}">${booking.status}</span>
+                    ${booking.patient_email ? `
+                        <div class="modal-field">
+                            <label>Email Address</label>
+                            <div class="modal-field-value">${booking.patient_email}</div>
+                        </div>
+                    ` : ''}
+                    <div class="modal-field">
+                        <label>Doctor</label>
+                        <div class="modal-field-value">${booking.doctor_name} - ${booking.department}</div>
                     </div>
-                </div>
-                <div class="modal-field">
-                    <label>Created At</label>
-                    <div class="modal-field-value">${new Date(booking.created_at).toLocaleString()}</div>
+                    <div class="modal-field">
+                        <label>Appointment Date</label>
+                        <div class="modal-field-value">${new Date(booking.appointment_date).toLocaleDateString()}</div>
+                    </div>
+                    <div class="modal-field">
+                        <label>Appointment Time</label>
+                        <div class="modal-field-value">${formatTime(booking.appointment_time)}</div>
+                    </div>
+                    <div class="modal-field">
+                        <label>Follow-up Appointment</label>
+                        <div class="modal-field-value">${booking.is_followup ? 'Yes' : 'No'}</div>
+                    </div>
+                    <div class="modal-field">
+                        <label>Status</label>
+                        <div class="modal-field-value">
+                            <span class="status-badge ${booking.status}">${booking.status.replace('_', ' ')}</span>
+                        </div>
+                    </div>
+                    <div class="modal-field">
+                        <label>Booking Reference</label>
+                        <div class="modal-field-value" style="font-family: monospace;">${booking.booking_reference}</div>
+                    </div>
+                    <div class="modal-field">
+                        <label>Created At</label>
+                        <div class="modal-field-value">${new Date(booking.created_at).toLocaleString()}</div>
+                    </div>
                 </div>
                 ${booking.notes ? `
                     <div class="modal-field">
@@ -879,31 +1020,32 @@
             
             // Populate modal actions
             modalActions.innerHTML = `
-                ${booking.status === 'pending' ? `
-                    <button class="btn btn-success btn-sm" onclick="updateBookingStatus(${booking.id}, 'confirmed')">
-                        Confirm
+                ${booking.status === 'confirmed' ? `
+                    <button class="btn btn-success btn-sm" onclick="updateBookingStatus(${booking.id}, 'completed')">
+                        Mark Complete
+                    </button>
+                    <button class="btn btn-warning btn-sm" onclick="updateBookingStatus(${booking.id}, 'needs_followup')">
+                        Needs Follow-up
                     </button>
                 ` : ''}
                 
-                ${booking.status !== 'cancelled' && booking.status !== 'completed' ? `
+                ${booking.status !== 'cancelled' ? `
                     <button class="btn btn-danger btn-sm" onclick="updateBookingStatus(${booking.id}, 'cancelled')">
                         Cancel
                     </button>
                 ` : ''}
                 
-                ${booking.status === 'confirmed' ? `
-                    <button class="btn btn-secondary btn-sm" onclick="updateBookingStatus(${booking.id}, 'completed')">
-                        Mark Complete
-                    </button>
-                ` : ''}
-                
                 ${booking.status === 'cancelled' || booking.status === 'completed' ? `
-                    <button class="btn btn-warning btn-sm" onclick="updateBookingStatus(${booking.id}, 'pending')">
+                    <button class="btn btn-warning btn-sm" onclick="updateBookingStatus(${booking.id}, 'confirmed')">
                         Reactivate
                     </button>
                 ` : ''}
                 
-                <button class="btn btn-secondary btn-sm" onclick="closeModal()">
+                <button class="btn btn-primary btn-sm" onclick="showRescheduleForm(${booking.id})">
+                    Reschedule
+                </button>
+                
+                <button class="btn btn-secondary btn-sm" onclick="closeModal('bookingModal')">
                     Close
                 </button>
             `;
@@ -911,22 +1053,9 @@
             modal.classList.add('active');
         }
         
-        // Close modal
-        function closeModal() {
-            const modal = document.getElementById('bookingModal');
-            modal.classList.remove('active');
-        }
-        
-        // Close modal when clicking outside
-        document.getElementById('bookingModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-        
         // Update booking status
         async function updateBookingStatus(bookingId, newStatus) {
-            if (!confirm(`Are you sure you want to mark this booking as ${newStatus}?`)) {
+            if (!confirm(`Are you sure you want to mark this booking as ${newStatus.replace('_', ' ')}?`)) {
                 return;
             }
             
@@ -948,11 +1077,10 @@
                         booking.status = newStatus;
                         displayBookings(getFilteredBookings());
                         updateStats();
-                        closeModal();
+                        closeModal('bookingModal');
                     }
                     
-                    // Show success feedback
-                    showNotification(`Booking status updated to ${newStatus}`, 'success');
+                    showNotification(`Booking status updated to ${newStatus.replace('_', ' ')}`, 'success');
                 } else {
                     throw new Error(result.message);
                 }
@@ -963,25 +1091,358 @@
             }
         }
         
+        // Load doctors
+        async function loadDoctors() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/doctors`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    allDoctors = result.doctors;
+                    displayDoctors(allDoctors);
+                } else {
+                    throw new Error(result.message || 'Failed to load doctors');
+                }
+            } catch (error) {
+                console.error('Error loading doctors:', error);
+                document.getElementById('doctorsContainer').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Error Loading Doctors</h3>
+                        <p>Unable to load doctors: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Display doctors
+        function displayDoctors(doctors) {
+            const container = document.getElementById('doctorsContainer');
+            const countElement = document.getElementById('doctorCount');
+            
+            countElement.textContent = `${doctors.length} doctor${doctors.length !== 1 ? 's' : ''}`;
+            
+            if (doctors.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Doctors Found</h3>
+                        <p>Add doctors to start managing appointments.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Contact</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${doctors.map(doctor => `
+                                <tr>
+                                    <td style="font-weight: 500;">${doctor.name}</td>
+                                    <td>${doctor.department}</td>
+                                    <td>${doctor.contact || 'N/A'}</td>
+                                    <td>
+                                        <span class="status-badge ${doctor.is_active ? 'confirmed' : 'cancelled'}">
+                                            ${doctor.is_active ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="editDoctor(${doctor.id})">Edit</button>
+                                        <button class="btn btn-secondary btn-sm" onclick="setDoctorAvailability(${doctor.id})">Availability</button>
+                                        <button class="btn btn-${doctor.is_active ? 'danger' : 'success'} btn-sm" 
+                                                onclick="toggleDoctorStatus(${doctor.id}, ${!doctor.is_active})">
+                                            ${doctor.is_active ? 'Deactivate' : 'Activate'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+        
+        // Show add doctor modal
+        function showAddDoctorModal() {
+            document.getElementById('doctorModalTitle').textContent = 'Add Doctor';
+            document.getElementById('doctorForm').reset();
+            document.getElementById('doctorId').value = '';
+            document.getElementById('doctorModal').classList.add('active');
+        }
+        
+        // Edit doctor
+        function editDoctor(doctorId) {
+            const doctor = allDoctors.find(d => d.id === doctorId);
+            if (!doctor) return;
+            
+            document.getElementById('doctorModalTitle').textContent = 'Edit Doctor';
+            document.getElementById('doctorId').value = doctor.id;
+            document.getElementById('doctorName').value = doctor.name;
+            document.getElementById('doctorDepartment').value = doctor.department;
+            document.getElementById('doctorContact').value = doctor.contact || '';
+            document.getElementById('doctorModal').classList.add('active');
+        }
+        
+        // Save doctor
+        async function saveDoctor() {
+            const doctorId = document.getElementById('doctorId').value;
+            const name = document.getElementById('doctorName').value;
+            const department = document.getElementById('doctorDepartment').value;
+            const contact = document.getElementById('doctorContact').value;
+            
+            if (!name || !department) {
+                showNotification('Name and department are required', 'error');
+                return;
+            }
+            
+            try {
+                const url = doctorId ? 
+                    `${API_BASE_URL}/api/doctors/${doctorId}` : 
+                    `${API_BASE_URL}/api/doctors`;
+                
+                const method = doctorId ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, department, contact })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('doctorModal');
+                    loadDoctors();
+                    showNotification(`Doctor ${doctorId ? 'updated' : 'added'} successfully`, 'success');
+                } else {
+                    throw new Error(result.message);
+                }
+                
+            } catch (error) {
+                console.error('Error saving doctor:', error);
+                showNotification(`Error saving doctor: ${error.message}`, 'error');
+            }
+        }
+        
+        // Set doctor availability
+        function setDoctorAvailability(doctorId) {
+            currentDoctorId = doctorId;
+            const doctor = allDoctors.find(d => d.id === doctorId);
+            
+            document.getElementById('availabilityModalTitle').textContent = `Set Availability - ${doctor.name}`;
+            
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const grid = document.getElementById('availabilityGrid');
+            
+            grid.innerHTML = days.map((day, index) => `
+                <div class="day-availability">
+                    <div class="day-checkbox">
+                        <label>
+                            <input type="checkbox" id="day-${index}" value="${index}">
+                            ${day}
+                        </label>
+                    </div>
+                    <div class="time-inputs">
+                        <input type="time" id="start-${index}" value="09:00">
+                        <span>to</span>
+                        <input type="time" id="end-${index}" value="17:00">
+                        <select id="duration-${index}">
+                            <option value="15">15 min</option>
+                            <option value="30" selected>30 min</option>
+                            <option value="60">60 min</option>
+                        </select>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('availabilityModal').classList.add('active');
+        }
+        
+        // Save availability
+        async function saveAvailability() {
+            const availability = [];
+            
+            for (let i = 0; i < 7; i++) {
+                const checkbox = document.getElementById(`day-${i}`);
+                if (checkbox.checked) {
+                    availability.push({
+                        day_of_week: i,
+                        start_time: document.getElementById(`start-${i}`).value,
+                        end_time: document.getElementById(`end-${i}`).value,
+                        slot_duration: parseInt(document.getElementById(`duration-${i}`).value)
+                    });
+                }
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/doctors/${currentDoctorId}/availability`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ availability })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    closeModal('availabilityModal');
+                    showNotification('Availability updated successfully', 'success');
+                } else {
+                    throw new Error(result.message);
+                }
+                
+            } catch (error) {
+                console.error('Error saving availability:', error);
+                showNotification(`Error saving availability: ${error.message}`, 'error');
+            }
+        }
+        
+        // Load doctors for manual booking
+        function loadDoctorsForManualBooking() {
+            const select = document.getElementById('manualDoctorSelect');
+            select.innerHTML = '<option value="">Select a doctor</option>';
+            
+            allDoctors.forEach(doctor => {
+                if (doctor.is_active) {
+                    const option = document.createElement('option');
+                    option.value = doctor.id;
+                    option.textContent = `${doctor.name} - ${doctor.department}`;
+                    select.appendChild(option);
+                }
+            });
+        }
+        
+        // Load follow-ups
+        async function loadFollowups() {
+            const followups = allBookings.filter(b => b.status === 'needs_followup' || b.is_followup);
+            
+            const container = document.getElementById('followupsContainer');
+            const countElement = document.getElementById('followupCount');
+            
+            const needsFollowup = allBookings.filter(b => b.status === 'needs_followup').length;
+            countElement.textContent = `${needsFollowup} follow-up${needsFollowup !== 1 ? 's' : ''} needed`;
+            
+            if (followups.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Follow-ups</h3>
+                        <p>No patients currently need follow-up appointments.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const tableHTML = `
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Phone</th>
+                                <th>Doctor</th>
+                                <th>Last Visit</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${followups.map(booking => `
+                                <tr>
+                                    <td style="font-weight: 500;">${booking.patient_name}</td>
+                                    <td>${booking.patient_phone}</td>
+                                    <td>${booking.doctor_name}</td>
+                                    <td>${new Date(booking.appointment_date).toLocaleDateString()}</td>
+                                    <td>
+                                        <span class="status-badge ${booking.status}">${booking.status.replace('_', ' ')}</span>
+                                        ${booking.is_followup ? '<span class="followup-badge">Follow-up</span>' : ''}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="bookFollowup('${booking.patient_name}', '${booking.patient_phone}', '${booking.patient_email}', ${booking.doctor_id})">
+                                            Book Follow-up
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+        
+        // Book follow-up
+        function bookFollowup(patientName, patientPhone, patientEmail, doctorId) {
+            // Switch to manual booking tab and pre-fill data
+            showTab('manual-booking');
+            
+            const form = document.getElementById('manualBookingForm');
+            form.patientName.value = patientName;
+            form.patientPhone.value = patientPhone;
+            form.patientEmail.value = patientEmail || '';
+            form.doctorId.value = doctorId;
+            form.isFollowup.checked = true;
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            form.appointmentDate.min = today;
+        }
+        
         // Update statistics
         function updateStats() {
             const total = allBookings.length;
             const today = new Date().toISOString().split('T')[0];
             const todayCount = allBookings.filter(b => b.appointment_date === today).length;
-            const pendingCount = allBookings.filter(b => b.status === 'pending').length;
+            const followupCount = allBookings.filter(b => b.status === 'needs_followup').length;
             
             document.getElementById('totalBookings').textContent = total;
             document.getElementById('todayBookings').textContent = todayCount;
-            document.getElementById('pendingBookings').textContent = pendingCount;
+            document.getElementById('followupBookings').textContent = followupCount;
         }
         
-        // Filter bookings based on current filter settings
+        // Populate doctor filter
+        function populateDoctorFilter() {
+            const select = document.getElementById('doctorFilter');
+            select.innerHTML = '<option value="">All Doctors</option>';
+            
+            const uniqueDoctors = [...new Set(allBookings.map(b => ({ id: b.doctor_id, name: b.doctor_name })))];
+            uniqueDoctors.forEach(doctor => {
+                const option = document.createElement('option');
+                option.value = doctor.id;
+                option.textContent = doctor.name;
+                select.appendChild(option);
+            });
+        }
+        
+        // Filter bookings
         function getFilteredBookings() {
             let filtered = [...allBookings];
             
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
             const statusFilter = document.getElementById('statusFilter').value;
             const dateFilter = document.getElementById('dateFilter').value;
-            const serviceFilter = document.getElementById('serviceFilter').value;
+            const doctorFilter = document.getElementById('doctorFilter').value;
+            
+            if (searchQuery) {
+                filtered = filtered.filter(b => 
+                    b.patient_name.toLowerCase().includes(searchQuery) ||
+                    b.patient_phone.includes(searchQuery) ||
+                    b.booking_reference.toLowerCase().includes(searchQuery)
+                );
+            }
             
             if (statusFilter) {
                 filtered = filtered.filter(b => b.status === statusFilter);
@@ -991,8 +1452,8 @@
                 filtered = filtered.filter(b => b.appointment_date === dateFilter);
             }
             
-            if (serviceFilter) {
-                filtered = filtered.filter(b => b.service_type === serviceFilter);
+            if (doctorFilter) {
+                filtered = filtered.filter(b => b.doctor_id == doctorFilter);
             }
             
             return filtered;
@@ -1006,20 +1467,49 @@
         
         // Clear all filters
         function clearFilters() {
+            document.getElementById('searchInput').value = '';
             document.getElementById('statusFilter').value = '';
             document.getElementById('dateFilter').value = '';
-            document.getElementById('serviceFilter').value = '';
+            document.getElementById('doctorFilter').value = '';
             displayBookings(allBookings);
         }
         
-        // Add event listeners to filters
-        document.getElementById('statusFilter').addEventListener('change', applyFilters);
-        document.getElementById('dateFilter').addEventListener('change', applyFilters);
-        document.getElementById('serviceFilter').addEventListener('change', applyFilters);
+        // Export bookings
+        function exportBookings() {
+            window.open(`${API_BASE_URL}/api/bookings/export`, '_blank');
+        }
+        
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+        
+        // Refresh current tab
+        function refreshCurrentTab() {
+            switch(currentTab) {
+                case 'bookings':
+                    loadBookings();
+                    break;
+                case 'doctors':
+                    loadDoctors();
+                    break;
+                case 'followups':
+                    loadFollowups();
+                    break;
+            }
+        }
         
         // Show notification
         function showNotification(message, type = 'info') {
-            // Create notification element
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
@@ -1046,11 +1536,57 @@
             notification.textContent = message;
             document.body.appendChild(notification);
             
-            // Remove after 3 seconds
             setTimeout(() => {
                 notification.remove();
             }, 3000);
         }
+        
+        // Add event listeners
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('dateFilter').addEventListener('change', applyFilters);
+        document.getElementById('doctorFilter').addEventListener('change', applyFilters);
+        
+        // Manual booking form submission
+        document.getElementById('manualBookingForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const bookingData = {
+                patientName: formData.get('patientName'),
+                patientPhone: formData.get('patientPhone'),
+                patientEmail: formData.get('patientEmail'),
+                doctorId: formData.get('doctorId'),
+                appointmentDate: formData.get('appointmentDate'),
+                appointmentTime: formData.get('appointmentTime'),
+                isFollowup: formData.has('isFollowup'),
+                notes: formData.get('notes')
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/bookings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    e.target.reset();
+                    showNotification('Appointment booked successfully!', 'success');
+                    loadBookings(); // Refresh bookings
+                } else {
+                    throw new Error(result.message);
+                }
+                
+            } catch (error) {
+                console.error('Error booking appointment:', error);
+                showNotification(`Error booking appointment: ${error.message}`, 'error');
+            }
+        });
         
         // Add CSS animation for notifications
         const style = document.createElement('style');
@@ -1068,7 +1604,7 @@
         `;
         document.head.appendChild(style);
         
-        console.log('Admin dashboard loaded successfully!');
+        console.log('Medical booking admin dashboard loaded successfully!');
         console.log('API Base URL:', API_BASE_URL);
     </script>
 </body>

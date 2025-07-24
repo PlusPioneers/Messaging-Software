@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Your Appointment</title>
+    <title>Book Medical Appointment</title>
     <style>
         :root {
             --primary-color: #2563eb;
@@ -35,7 +35,7 @@
         }
         
         .booking-container {
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
             padding-top: 1.5rem;
         }
@@ -56,7 +56,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--success-color), var(--warning-color), var(--danger-color));
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
         }
         
         .widget-header {
@@ -125,10 +125,44 @@
             gap: 1rem;
         }
         
-        @media (max-width: 500px) {
-            .form-row {
+        .form-row-three {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row,
+            .form-row-three {
                 grid-template-columns: 1fr;
             }
+        }
+        
+        .followup-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--background-color);
+            border-radius: 0.5rem;
+            border: 2px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+        
+        .followup-toggle:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .followup-toggle input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: var(--primary-color);
+        }
+        
+        .followup-toggle label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
         }
         
         .submit-btn {
@@ -222,8 +256,78 @@
             border-left: 4px solid var(--primary-color);
         }
         
-        .service-option {
-            text-transform: capitalize;
+        .booking-confirmation {
+            background: var(--background-color);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 2px solid var(--success-color);
+            margin-top: 1.5rem;
+        }
+        
+        .booking-confirmation h3 {
+            color: var(--success-color);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        .confirmation-details {
+            display: grid;
+            gap: 0.75rem;
+        }
+        
+        .confirmation-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .confirmation-item:last-child {
+            border-bottom: none;
+        }
+        
+        .confirmation-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .confirmation-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .booking-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn-secondary {
+            background: var(--text-secondary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--text-primary);
+        }
+        
+        .availability-loading {
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 0.5rem;
+        }
+        
+        .no-slots {
+            color: var(--danger-color);
+            font-weight: 500;
+            padding: 0.5rem;
         }
         
         .form-validation-error {
@@ -240,65 +344,62 @@
     <div class="booking-container">
         <div class="booking-widget">
             <div class="widget-header">
-                <h2>Book Your Appointment</h2>
-                <p>Schedule your appointment in just a few clicks</p>
+                <h2>Book Medical Appointment</h2>
+                <p>Schedule your appointment with our medical professionals</p>
             </div>
             
             <div class="info-text">
-                <strong>Need help?</strong> All fields marked with <span class="required">*</span> are required. We'll send you a confirmation email once your booking is confirmed.
+                <strong>Important:</strong> All fields marked with <span class="required">*</span> are required. You'll receive a confirmation with your booking reference number.
             </div>
             
             <form id="bookingForm" novalidate>
                 <div class="form-group">
-                    <label for="customerName">Full Name <span class="required">*</span></label>
+                    <label for="patientName">Patient Name <span class="required">*</span></label>
                     <input 
                         type="text" 
-                        id="customerName" 
-                        name="customerName" 
+                        id="patientName" 
+                        name="patientName" 
                         required
-                        placeholder="Enter your full name"
+                        placeholder="Enter patient's full name"
                         autocomplete="name"
                     >
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="customerEmail">Email Address <span class="required">*</span></label>
+                        <label for="patientPhone">Phone Number <span class="required">*</span></label>
                         <input 
-                            type="email" 
-                            id="customerEmail" 
-                            name="customerEmail" 
+                            type="tel" 
+                            id="patientPhone" 
+                            name="patientPhone"
                             required
-                            placeholder="your.email@example.com"
-                            autocomplete="email"
+                            placeholder="+1 (555) 123-4567"
+                            autocomplete="tel"
                         >
                     </div>
                     
                     <div class="form-group">
-                        <label for="customerPhone">Phone Number</label>
+                        <label for="patientEmail">Email Address</label>
                         <input 
-                            type="tel" 
-                            id="customerPhone" 
-                            name="customerPhone"
-                            placeholder="+1 (555) 123-4567"
-                            autocomplete="tel"
+                            type="email" 
+                            id="patientEmail" 
+                            name="patientEmail"
+                            placeholder="patient@example.com"
+                            autocomplete="email"
                         >
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="serviceType">Service Type <span class="required">*</span></label>
-                    <select id="serviceType" name="serviceType" required>
-                        <option value="">Select a service</option>
-                        <option value="consultation" class="service-option">Consultation (60 minutes)</option>
-                        <option value="followup" class="service-option">Follow-up (30 minutes)</option>
-                        <option value="assessment" class="service-option">Assessment (90 minutes)</option>
+                    <label for="doctorId">Preferred Doctor <span class="required">*</span></label>
+                    <select id="doctorId" name="doctorId" required>
+                        <option value="">Select a doctor</option>
                     </select>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="appointmentDate">Preferred Date <span class="required">*</span></label>
+                        <label for="appointmentDate">Appointment Date <span class="required">*</span></label>
                         <input 
                             type="date" 
                             id="appointmentDate" 
@@ -308,25 +409,17 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="appointmentTime">Preferred Time <span class="required">*</span></label>
-                        <select id="appointmentTime" name="appointmentTime" required>
-                            <option value="">Select time</option>
-                            <option value="09:00">9:00 AM</option>
-                            <option value="09:30">9:30 AM</option>
-                            <option value="10:00">10:00 AM</option>
-                            <option value="10:30">10:30 AM</option>
-                            <option value="11:00">11:00 AM</option>
-                            <option value="11:30">11:30 AM</option>
-                            <option value="13:00">1:00 PM</option>
-                            <option value="13:30">1:30 PM</option>
-                            <option value="14:00">2:00 PM</option>
-                            <option value="14:30">2:30 PM</option>
-                            <option value="15:00">3:00 PM</option>
-                            <option value="15:30">3:30 PM</option>
-                            <option value="16:00">4:00 PM</option>
-                            <option value="16:30">4:30 PM</option>
-                            <option value="17:00">5:00 PM</option>
+                        <label for="appointmentTime">Available Time Slots <span class="required">*</span></label>
+                        <select id="appointmentTime" name="appointmentTime" required disabled>
+                            <option value="">Select date and doctor first</option>
                         </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="followup-toggle">
+                        <input type="checkbox" id="isFollowup" name="isFollowup">
+                        <label for="isFollowup">This is a follow-up appointment</label>
                     </div>
                 </div>
                 
@@ -336,17 +429,26 @@
                         id="notes" 
                         name="notes" 
                         rows="3" 
-                        placeholder="Any special requirements, questions, or additional information..."
+                        placeholder="Any symptoms, concerns, or special requirements..."
                     ></textarea>
                 </div>
                 
                 <button type="submit" class="submit-btn" id="submitBtn">
-                    <span class="btn-text">Book My Appointment</span>
+                    <span class="btn-text">Book Appointment</span>
                 </button>
             </form>
             
             <div id="successMessage" class="message success-message">
-                <strong>Success!</strong> Your appointment has been booked successfully! You'll receive a confirmation email shortly with all the details.
+                <div class="booking-confirmation" id="bookingConfirmation" style="display: none;">
+                    <h3>Appointment Confirmed!</h3>
+                    <div class="confirmation-details" id="confirmationDetails">
+                        <!-- Details will be populated by JavaScript -->
+                    </div>
+                    <div class="booking-actions">
+                        <button class="btn-secondary" onclick="bookAnother()">Book Another</button>
+                        <button class="btn-secondary" onclick="window.print()">Print Confirmation</button>
+                    </div>
+                </div>
             </div>
             
             <div id="errorMessage" class="message error-message">
@@ -356,7 +458,7 @@
     </div>
 
     <script>
-        // Configuration - Replace with your actual server URL
+        // Configuration
         const API_BASE_URL = 'https://messaging-software-production.up.railway.app';
         
         // Set minimum date to today
@@ -370,23 +472,124 @@
         const successMsg = document.getElementById('successMessage');
         const errorMsg = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
+        const doctorSelect = document.getElementById('doctorId');
+        const dateInput = document.getElementById('appointmentDate');
+        const timeSelect = document.getElementById('appointmentTime');
+        
+        let doctors = [];
+        
+        // Load doctors when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDoctors();
+        });
+        
+        // Load doctors from API
+        async function loadDoctors() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/doctors`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    doctors = result.doctors;
+                    populateDoctorSelect();
+                } else {
+                    throw new Error(result.message || 'Failed to load doctors');
+                }
+            } catch (error) {
+                console.error('Error loading doctors:', error);
+                showMessage(errorMsg, 'Unable to load doctors. Please refresh the page.');
+            }
+        }
+        
+        // Populate doctor dropdown
+        function populateDoctorSelect() {
+            doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
+            
+            doctors.forEach(doctor => {
+                const option = document.createElement('option');
+                option.value = doctor.id;
+                option.textContent = `${doctor.name} - ${doctor.department}`;
+                doctorSelect.appendChild(option);
+            });
+        }
+        
+        // Load available time slots when doctor and date are selected
+        async function loadTimeSlots() {
+            const doctorId = doctorSelect.value;
+            const date = dateInput.value;
+            
+            if (!doctorId || !date) {
+                timeSelect.innerHTML = '<option value="">Select date and doctor first</option>';
+                timeSelect.disabled = true;
+                return;
+            }
+            
+            timeSelect.innerHTML = '<option value="">Loading available slots...</option>';
+            timeSelect.disabled = true;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/doctors/${doctorId}/slots/${date}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    timeSelect.innerHTML = '';
+                    
+                    if (result.availableSlots.length === 0) {
+                        timeSelect.innerHTML = '<option value="">No slots available for this date</option>';
+                        timeSelect.disabled = true;
+                    } else {
+                        timeSelect.innerHTML = '<option value="">Select a time slot</option>';
+                        
+                        result.availableSlots.forEach(slot => {
+                            const option = document.createElement('option');
+                            option.value = slot;
+                            option.textContent = formatTime(slot);
+                            timeSelect.appendChild(option);
+                        });
+                        
+                        timeSelect.disabled = false;
+                    }
+                } else {
+                    throw new Error(result.message || 'Failed to load time slots');
+                }
+            } catch (error) {
+                console.error('Error loading time slots:', error);
+                timeSelect.innerHTML = '<option value="">Error loading slots</option>';
+                timeSelect.disabled = true;
+            }
+        }
+        
+        // Format time for display
+        function formatTime(time) {
+            const [hours, minutes] = time.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+        
+        // Event listeners for dynamic slot loading
+        doctorSelect.addEventListener('change', loadTimeSlots);
+        dateInput.addEventListener('change', loadTimeSlots);
         
         // Form validation
         function validateForm(data) {
             const errors = [];
             
-            if (!data.customerName.trim()) {
-                errors.push('Full name is required');
+            if (!data.patientName.trim()) {
+                errors.push('Patient name is required');
             }
             
-            if (!data.customerEmail.trim()) {
-                errors.push('Email address is required');
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.customerEmail)) {
+            if (!data.patientPhone.trim()) {
+                errors.push('Phone number is required');
+            }
+            
+            if (data.patientEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.patientEmail)) {
                 errors.push('Please enter a valid email address');
             }
             
-            if (!data.serviceType) {
-                errors.push('Please select a service type');
+            if (!data.doctorId) {
+                errors.push('Please select a doctor');
             }
             
             if (!data.appointmentDate) {
@@ -413,6 +616,7 @@
             // Hide all messages first
             successMsg.style.display = 'none';
             errorMsg.style.display = 'none';
+            document.getElementById('bookingConfirmation').style.display = 'none';
             
             if (message) {
                 errorText.textContent = message;
@@ -422,13 +626,89 @@
             element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
+        // Show booking confirmation
+        function showBookingConfirmation(bookingData, result) {
+            const confirmationDiv = document.getElementById('bookingConfirmation');
+            const detailsDiv = document.getElementById('confirmationDetails');
+            
+            const selectedDoctor = doctors.find(d => d.id == bookingData.doctorId);
+            const doctorName = selectedDoctor ? `${selectedDoctor.name} - ${selectedDoctor.department}` : 'Unknown Doctor';
+            
+            detailsDiv.innerHTML = `
+                <div class="confirmation-item">
+                    <span class="confirmation-label">Booking Reference:</span>
+                    <span class="confirmation-value">${result.bookingReference}</span>
+                </div>
+                <div class="confirmation-item">
+                    <span class="confirmation-label">Patient Name:</span>
+                    <span class="confirmation-value">${bookingData.patientName}</span>
+                </div>
+                <div class="confirmation-item">
+                    <span class="confirmation-label">Doctor:</span>
+                    <span class="confirmation-value">${doctorName}</span>
+                </div>
+                <div class="confirmation-item">
+                    <span class="confirmation-label">Date:</span>
+                    <span class="confirmation-value">${new Date(bookingData.appointmentDate).toLocaleDateString()}</span>
+                </div>
+                <div class="confirmation-item">
+                    <span class="confirmation-label">Time:</span>
+                    <span class="confirmation-value">${formatTime(bookingData.appointmentTime)}</span>
+                </div>
+                <div class="confirmation-item">
+                    <span class="confirmation-label">Follow-up:</span>
+                    <span class="confirmation-value">${bookingData.isFollowup ? 'Yes' : 'No'}</span>
+                </div>
+                ${bookingData.patientPhone ? `
+                    <div class="confirmation-item">
+                        <span class="confirmation-label">Phone:</span>
+                        <span class="confirmation-value">${bookingData.patientPhone}</span>
+                    </div>
+                ` : ''}
+                ${bookingData.patientEmail ? `
+                    <div class="confirmation-item">
+                        <span class="confirmation-label">Email:</span>
+                        <span class="confirmation-value">${bookingData.patientEmail}</span>
+                    </div>
+                ` : ''}
+            `;
+            
+            confirmationDiv.style.display = 'block';
+            showMessage(successMsg);
+        }
+        
+        // Book another appointment
+        function bookAnother() {
+            form.reset();
+            document.getElementById('appointmentDate').min = today;
+            timeSelect.innerHTML = '<option value="">Select date and doctor first</option>';
+            timeSelect.disabled = true;
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            // Scroll to top
+            document.querySelector('.booking-widget').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+        
         // Form submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             // Get form data
             const formData = new FormData(form);
-            const bookingData = Object.fromEntries(formData.entries());
+            const bookingData = {
+                patientName: formData.get('patientName'),
+                patientPhone: formData.get('patientPhone'),
+                patientEmail: formData.get('patientEmail'),
+                doctorId: formData.get('doctorId'),
+                appointmentDate: formData.get('appointmentDate'),
+                appointmentTime: formData.get('appointmentTime'),
+                isFollowup: formData.has('isFollowup'),
+                notes: formData.get('notes')
+            };
             
             console.log('Submitting booking data:', bookingData);
             
@@ -441,12 +721,10 @@
             
             // Show loading state
             submitBtn.classList.add('loading');
-            btnText.textContent = 'Booking your appointment...';
+            btnText.textContent = 'Booking appointment...';
             submitBtn.disabled = true;
             
             try {
-                console.log('Sending request to:', `${API_BASE_URL}/api/bookings`);
-                
                 const response = await fetch(`${API_BASE_URL}/api/bookings`, {
                     method: 'POST',
                     headers: {
@@ -456,23 +734,15 @@
                     body: JSON.stringify(bookingData)
                 });
                 
-                console.log('Response status:', response.status);
-                
                 const result = await response.json();
-                console.log('Response data:', result);
                 
                 if (response.ok && result.success) {
-                    // Success
-                    showMessage(successMsg);
+                    // Success - show confirmation
+                    showBookingConfirmation(bookingData, result);
                     form.reset();
                     document.getElementById('appointmentDate').min = today;
-                    
-                    // Scroll to top of widget
-                    document.querySelector('.booking-widget').scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start' 
-                    });
-                    
+                    timeSelect.innerHTML = '<option value="">Select date and doctor first</option>';
+                    timeSelect.disabled = true;
                 } else {
                     // Server error
                     throw new Error(result.message || 'Booking failed');
@@ -494,7 +764,7 @@
             } finally {
                 // Reset button state
                 submitBtn.classList.remove('loading');
-                btnText.textContent = 'Book My Appointment';
+                btnText.textContent = 'Book Appointment';
                 submitBtn.disabled = false;
             }
         });
@@ -521,7 +791,7 @@
         });
         
         // Email validation
-        document.getElementById('customerEmail').addEventListener('blur', function() {
+        document.getElementById('patientEmail').addEventListener('blur', function() {
             const email = this.value.trim();
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             
@@ -534,7 +804,7 @@
             }
         });
         
-        console.log('Booking widget loaded successfully!');
+        console.log('Medical booking widget loaded successfully!');
         console.log('API Base URL:', API_BASE_URL);
     </script>
 </body>
