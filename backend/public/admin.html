@@ -587,7 +587,105 @@
             padding-top: 1rem;
             border-top: 1px solid #e2e8f0;
         }
-        
+        /* Reschedule Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    height: 60px;
+    resize: vertical;
+}
+
+.form-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.form-actions button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-actions button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.form-actions button[type="button"] {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-reschedule {
+    background-color: #ff9800;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-reschedule:hover {
+    background-color: #e68900;
+}
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -1644,7 +1742,126 @@
                         </div>
                     </div>
                 `;
-                
+                // Global variable to store current reschedule booking
+let currentRescheduleBooking = null;
+
+// Function to open reschedule modal
+function rescheduleBooking(bookingId) {
+    // Find the booking data
+    const booking = allBookings.find(b => b.id === bookingId);
+    if (!booking) {
+        alert('Booking not found');
+        return;
+    }
+
+    currentRescheduleBooking = booking;
+    
+    // Populate modal fields
+    document.getElementById('reschedulePatientName').value = booking.patient_name;
+    document.getElementById('currentAppointment').value = `${booking.appointment_date} at ${booking.appointment_time}`;
+    
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('rescheduleDate').min = today;
+    
+    // Clear previous selections
+    document.getElementById('rescheduleDate').value = '';
+    document.getElementById('rescheduleTime').innerHTML = '<option value="">Select new date first</option>';
+    document.getElementById('rescheduleNotes').value = '';
+    
+    // Show modal
+    document.getElementById('rescheduleModal').style.display = 'block';
+}
+
+// Function to close reschedule modal
+function closeRescheduleModal() {
+    document.getElementById('rescheduleModal').style.display = 'none';
+    currentRescheduleBooking = null;
+}
+
+// Event listener for reschedule date change
+document.getElementById('rescheduleDate').addEventListener('change', async function() {
+    const selectedDate = this.value;
+    const timeSelect = document.getElementById('rescheduleTime');
+    
+    if (!selectedDate || !currentRescheduleBooking) {
+        timeSelect.innerHTML = '<option value="">Select date first</option>';
+        return;
+    }
+
+    try {
+        // Fetch available slots for the selected date
+        const response = await fetch(`/api/doctors/${currentRescheduleBooking.doctor_id}/slots/${selectedDate}`);
+        const data = await response.json();
+
+        if (data.success) {
+            timeSelect.innerHTML = '<option value="">Select a time</option>';
+            
+            if (data.availableSlots.length === 0) {
+                timeSelect.innerHTML = '<option value="">No slots available</option>';
+            } else {
+                data.availableSlots.forEach(slot => {
+                    const option = document.createElement('option');
+                    option.value = slot;
+                    option.textContent = slot;
+                    timeSelect.appendChild(option);
+                });
+            }
+        } else {
+            timeSelect.innerHTML = '<option value="">Error loading slots</option>';
+        }
+    } catch (error) {
+        console.error('Error fetching time slots:', error);
+        timeSelect.innerHTML = '<option value="">Error loading slots</option>';
+    }
+});
+
+// Handle reschedule form submission
+document.getElementById('rescheduleForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    if (!currentRescheduleBooking) {
+        alert('No booking selected for rescheduling');
+        return;
+    }
+
+    const newDate = document.getElementById('rescheduleDate').value;
+    const newTime = document.getElementById('rescheduleTime').value;
+    const notes = document.getElementById('rescheduleNotes').value;
+
+    if (!newDate || !newTime) {
+        alert('Please select both new date and time');
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/bookings/${currentRescheduleBooking.id}/reschedule`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                newDate: newDate,
+                newTime: newTime,
+                notes: notes
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            alert('Appointment rescheduled successfully!');
+            closeRescheduleModal();
+            loadBookings(); // Refresh the bookings list
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Error rescheduling appointment:', error);
+        alert('An error occurred while rescheduling the appointment');
+    }
+});
+
                 // Add modal to page
                 document.body.insertAdjacentHTML('beforeend', modalHtml);
                 
@@ -1972,5 +2189,41 @@
         console.log('Medical booking admin dashboard loaded successfully!');
         console.log('API Base URL:', API_BASE_URL);
     </script>
+    <!-- Reschedule Modal -->
+<div id="rescheduleModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeRescheduleModal()">&times;</span>
+        <h2>Reschedule Appointment</h2>
+        <form id="rescheduleForm">
+            <div class="form-group">
+                <label>Patient:</label>
+                <input type="text" id="reschedulePatientName" readonly>
+            </div>
+            <div class="form-group">
+                <label>Current Appointment:</label>
+                <input type="text" id="currentAppointment" readonly>
+            </div>
+            <div class="form-group">
+                <label for="rescheduleDate">New Date *</label>
+                <input type="date" id="rescheduleDate" required>
+            </div>
+            <div class="form-group">
+                <label for="rescheduleTime">New Time *</label>
+                <select id="rescheduleTime" required>
+                    <option value="">Select new date first</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="rescheduleNotes">Reason for Reschedule</label>
+                <textarea id="rescheduleNotes" placeholder="Optional: Reason for rescheduling"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Reschedule Appointment</button>
+                <button type="button" onclick="closeRescheduleModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>

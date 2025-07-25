@@ -762,3 +762,135 @@ process.on('SIGINT', () => {
         process.exit(0);
     });
 });
+// Reschedule appointment
+app.put('/api/bookings/:id/reschedule', (req, res) => {
+    const { id } = req.params;
+    const { newDate, newTime, notes } = req.body;
+
+    // Validate required fields
+    if (!newDate || !newTime) {
+        return res.status(400).json({
+            success: false,
+            message: 'New date and time are required'
+        });
+    }
+
+    // Check if the new date is not in the past
+    const selectedDate = new Date(newDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+        return res.status(400).json({
+            success: false,
+            message: 'Cannot reschedule to a past date'
+        });
+    }
+
+    // First, get the current booking details
+    db.get('SELECT * FROM bookings WHERE id = ?', [id], (err, booking) => {
+        if (err) {
+            console.error('Error fetching booking:', err);
+            return res.status(500).json({
+                success: false,
+                message: 'Error fetching booking details'
+            });
+        }
+
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                message: 'Booking not found'
+            });
+        }
+
+        // Check if the new slot is available (excluding current booking)
+        db.get(
+            `SELECT id FROM bookings 
+             WHERE doctor_id = ? AND appointment_date = ? AND appointment_time = ? 
+             AND status != "cancelled" AND id != ?`,
+            [booking.doctor_id, newDate, newTime, id],
+            (err, existingBooking) => {
+                if (err) {
+                    console.error('Database error:', err);
+                    return res.status(500).json({
+                        success: false,
+                        message: 'Database error occurred'
+                    });
+                }
+
+                if (existingBooking) {
+                    return res.status(409).json({
+                        success: false,
+                        message: 'The new time slot is already booked. Please choose a different time.'
+                    });
+                }
+
+                // Update the booking with new date and time
+                const updateNotes = notes ? `${booking.notes || ''}\n\nRescheduled from ${booking.appointment_date} ${booking.appointment_time} to ${newDate} ${newTime}. Reason: ${notes}`.trim() : booking.notes;
+
+                db.run(
+                    `UPDATE bookings 
+                     SET appointment_date = ?, appointment_time = ?, notes = ?
+                     WHERE id = ?`,
+                    [newDate, newTime, updateNotes, id],
+                    function(err) {
+                        if (err) {
+                            console.error('Update error:', err);
+                            return res.status(500).json({
+                                success: false,
+                                message: 'Failed to reschedule appointment'
+                            });
+                        }
+
+                        if (this.changes === 0) {
+                            return res.status(404).json({
+                                success: false,
+                                message: 'Booking not found'
+                            });
+                        }
+
+                        // Send confirmation email if patient has email
+                        if (booking.patient_email) {
+                            db.get('SELECT name FROM doctors WHERE id = ?', [booking.doctor_id], (err, doctor) => {
+                                const doctorName = doctor ? doctor.name : 'Unknown Doctor';
+                                
+                                const mailOptions = {
+                                    from: 'essstellers@gmail.com',
+                                    to: booking.patient_email,
+                                    subject: 'Appointment Rescheduled',
+                                    html: `
+                                        <h2>Appointment Rescheduled</h2>
+                                        <p>Dear <strong>${booking.patient_name}</strong>,</p>
+                                        <p>Your appointment has been rescheduled:</p>
+                                        <ul>
+                                            <li><strong>Doctor:</strong> ${doctorName}</li>
+                                            <li><strong>New Date:</strong> ${newDate}</li>
+                                            <li><strong>New Time:</strong> ${newTime}</li>
+                                            <li><strong>Booking Reference:</strong> ${booking.booking_reference}</li>
+                                        </ul>
+                                        <p>Please arrive 15 minutes before your scheduled appointment time.</p>
+                                        <p>If you have any questions, please contact us.</p>
+                                    `
+                                };
+
+                                transporter.sendMail(mailOptions, (error, info) => {
+                                    if (error) {
+                                        console.log('Email error:', error);
+                                    } else {
+                                        console.log('Reschedule email sent:', info.response);
+                                    }
+                                });
+                            });
+                        }
+
+                        res.json({
+                            success: true,
+                            message: 'Appointment rescheduled successfully'
+                        });
+                    }
+                );
+            }
+        );
+    });
+});
