@@ -203,6 +203,33 @@ app.put('/api/doctors/:id', (req, res) => {
     );
 });
 
+// Update doctor status specifically
+app.put('/api/doctors/:id/status', (req, res) => {
+    const { id } = req.params;
+    const { is_active } = req.body;
+    
+    if (is_active === undefined) {
+        return res.status(400).json({ success: false, message: 'is_active field is required' });
+    }
+    
+    db.run(
+        'UPDATE doctors SET is_active = ? WHERE id = ?',
+        [is_active, id],
+        function(err) {
+            if (err) {
+                console.error('Error updating doctor status:', err);
+                return res.status(500).json({ success: false, message: 'Error updating doctor status' });
+            }
+            
+            if (this.changes === 0) {
+                return res.status(404).json({ success: false, message: 'Doctor not found' });
+            }
+            
+            res.json({ success: true, message: 'Doctor status updated successfully' });
+        }
+    );
+});
+
 // Delete doctor
 app.delete('/api/doctors/:id', (req, res) => {
     const { id } = req.params;

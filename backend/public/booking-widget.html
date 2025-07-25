@@ -503,12 +503,26 @@
         
         // Listen for doctor status changes from admin panel
         window.addEventListener('doctorStatusChanged', function() {
+            console.log('Doctor status changed event received:', event.detail);
             loadDoctors();
+            // Also reload time slots if the current doctor was affected
+            const currentDoctorId = doctorSelect.value;
+            if (currentDoctorId && event.detail && event.detail.doctorId == currentDoctorId) {
+                loadTimeSlots();
+            }
         });
         
         // Listen for doctor deletions from admin panel
-        window.addEventListener('doctorDeleted', function() {
+        window.addEventListener('doctorDeleted', function(event) {
+            console.log('Doctor deleted event received:', event.detail);
             loadDoctors();
+            // Clear time slots if the deleted doctor was selected
+            const currentDoctorId = doctorSelect.value;
+            if (currentDoctorId && event.detail && event.detail.doctorId == currentDoctorId) {
+                timeSelect.innerHTML = '<option value="">Select date and doctor first</option>';
+                timeSelect.disabled = true;
+                doctorSelect.value = '';
+            }
         });
         
         // Populate doctor dropdown
@@ -516,7 +530,9 @@
             doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
             
             // Only show active doctors
-            doctors.filter(doctor => doctor.is_active === 1).forEach(doctor => {
+            const activeDoctors = doctors.filter(doctor => doctor.is_active === 1);
+            
+            activeDoctors.forEach(doctor => {
                 const option = document.createElement('option');
                 option.value = doctor.id;
                 option.textContent = `${doctor.name} - ${doctor.department}`;
@@ -524,11 +540,14 @@
             });
             
             // If no active doctors, show message
-            if (doctors.filter(doctor => doctor.is_active === 1).length === 0) {
+            if (activeDoctors.length === 0) {
                 const option = document.createElement('option');
                 option.value = '';
                 option.textContent = 'No doctors available at the moment';
                 doctorSelect.appendChild(option);
+                doctorSelect.disabled = true;
+            } else {
+                doctorSelect.disabled = false;
             }
         }
         

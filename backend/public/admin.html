@@ -1076,9 +1076,9 @@
                 document.getElementById('bookingsContainer').innerHTML = `
                     <div class="empty-state">
                         <h3>Error Loading Data</h3>
-                        <p>Unable to load bookings: ${error.message}</p>
-                        <button class="btn btn-primary" onclick="loadBookings()" style="margin-top: 1rem;">
-                            Try Again
+                        <button class="btn btn-sm ${doctor.is_active ? 'btn-secondary' : 'btn-success'}" 
+                                onclick="toggleDoctorStatus(${doctor.id}, ${doctor.is_active ? 0 : 1})">
+                            ${doctor.is_active ? 'Deactivate' : 'Activate'}
                         </button>
                     </div>
                 `;
@@ -2004,7 +2004,7 @@ document.getElementById('rescheduleForm').addEventListener('submit', async funct
         // Toggle doctor status (activate/deactivate)
         async function toggleDoctorStatus(doctorId, newStatus) {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/doctors/${doctorId}`, {
+                const response = await fetch(`${API_BASE_URL}/api/doctors/${doctorId}/status`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2017,8 +2017,13 @@ document.getElementById('rescheduleForm').addEventListener('submit', async funct
                 if (result.success) {
                     showNotification(`Doctor ${newStatus ? 'activated' : 'deactivated'} successfully`, 'success');
                     loadDoctors();
-                    // Refresh the booking widget's doctor list by triggering a custom event
+                    showNotification(`Doctor ${newStatus === 0 ? 'deactivated' : 'activated'} successfully`, 'success');
                     window.dispatchEvent(new CustomEvent('doctorStatusChanged'));
+                    
+                    // Dispatch event to notify booking widget
+                    window.dispatchEvent(new CustomEvent('doctorStatusChanged', {
+                        detail: { doctorId, newStatus }
+                    }));
                 } else {
                     throw new Error(result.message || 'Failed to update doctor status');
                 }
@@ -2158,7 +2163,13 @@ document.getElementById('rescheduleForm').addEventListener('submit', async funct
                 
                 if (result.success) {
                     e.target.reset();
-                    showNotification('Appointment booked successfully!', 'success');
+                    showNotification(`Appointment booked successfully! Reference: ${result.bookingReference}`, 'success');
+                    
+                    // Reset time slots
+                    const timeSelect = document.getElementById('manualAppointmentTime');
+                    timeSelect.innerHTML = '<option value="">Select date and doctor first</option>';
+                    timeSelect.disabled = true;
+                    
                     loadBookings(); // Refresh bookings
                 } else {
                     throw new Error(result.message);
