@@ -499,6 +499,95 @@
             width: 100px;
         }
         
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 0;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #1e293b;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #64748b;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            color: #1e293b;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .booking-info {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .booking-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: #1e293b;
+            font-size: 1rem;
+        }
+        
+        .booking-info p {
+            margin: 0.25rem 0;
+            color: #475569;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -534,6 +623,23 @@
             .data-table th,
             .data-table td {
                 padding: 0.75rem 0.5rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
             }
         }
     </style>
@@ -1041,7 +1147,7 @@
                     </button>
                 ` : ''}
                 
-                <button class="btn btn-primary btn-sm" onclick="showRescheduleForm(${booking.id})">
+                <button class="btn btn-primary btn-sm" onclick="showRescheduleModal(${booking.id})">
                     Reschedule
                 </button>
                 
@@ -1161,6 +1267,7 @@
                                                 onclick="toggleDoctorStatus(${doctor.id}, ${!doctor.is_active})">
                                             ${doctor.is_active ? 'Deactivate' : 'Activate'}
                                         </button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteDoctor(${doctor.id}, '${doctor.name}')">Delete</button>
                                     </td>
                                 </tr>
                             `).join('')}
@@ -1477,6 +1584,264 @@
         // Export bookings
         function exportBookings() {
             window.open(`${API_BASE_URL}/api/bookings/export`, '_blank');
+        }
+        
+        // Show reschedule modal
+        async function showRescheduleModal(bookingId) {
+            try {
+                // Get booking details
+                const response = await fetch(`${API_BASE_URL}/api/bookings`);
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error('Failed to fetch booking details');
+                }
+                
+                const booking = result.bookings.find(b => b.id === bookingId);
+                if (!booking) {
+                    throw new Error('Booking not found');
+                }
+                
+                // Create reschedule modal
+                const modalHtml = `
+                    <div class="modal-overlay" id="rescheduleModal" onclick="closeRescheduleModal(event)">
+                        <div class="modal-content" onclick="event.stopPropagation()">
+                            <div class="modal-header">
+                                <h3>Reschedule Appointment</h3>
+                                <button class="modal-close" onclick="closeRescheduleModal()">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="booking-info">
+                                    <h4>Current Appointment Details</h4>
+                                    <p><strong>Patient:</strong> ${booking.patient_name}</p>
+                                    <p><strong>Doctor:</strong> ${booking.doctor_name}</p>
+                                    <p><strong>Current Date:</strong> ${booking.appointment_date}</p>
+                                    <p><strong>Current Time:</strong> ${booking.appointment_time}</p>
+                                </div>
+                                <form id="rescheduleForm">
+                                    <div class="form-group">
+                                        <label for="rescheduleDoctor">Doctor:</label>
+                                        <select id="rescheduleDoctor" name="doctorId" required>
+                                            <option value="">Select a doctor</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rescheduleDate">New Date:</label>
+                                        <input type="date" id="rescheduleDate" name="appointmentDate" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rescheduleTime">New Time:</label>
+                                        <select id="rescheduleTime" name="appointmentTime" required disabled>
+                                            <option value="">Select date and doctor first</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" class="btn btn-secondary" onclick="closeRescheduleModal()">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Reschedule Appointment</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add modal to page
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                
+                // Load doctors for reschedule form
+                await loadDoctorsForReschedule();
+                
+                // Set current doctor as selected
+                document.getElementById('rescheduleDoctor').value = booking.doctor_id;
+                
+                // Set minimum date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('rescheduleDate').min = today;
+                
+                // Add event listeners for dynamic slot loading
+                document.getElementById('rescheduleDoctor').addEventListener('change', loadRescheduleTimeSlots);
+                document.getElementById('rescheduleDate').addEventListener('change', loadRescheduleTimeSlots);
+                
+                // Handle form submission
+                document.getElementById('rescheduleForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await handleReschedule(bookingId, e.target);
+                });
+                
+            } catch (error) {
+                console.error('Error showing reschedule modal:', error);
+                showNotification('Error loading reschedule form', 'error');
+            }
+        }
+        
+        // Close reschedule modal
+        function closeRescheduleModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            
+            const modal = document.getElementById('rescheduleModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        // Load doctors for reschedule form
+        async function loadDoctorsForReschedule() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/doctors`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const select = document.getElementById('rescheduleDoctor');
+                    select.innerHTML = '<option value="">Select a doctor</option>';
+                    
+                    result.doctors.forEach(doctor => {
+                        const option = document.createElement('option');
+                        option.value = doctor.id;
+                        option.textContent = `${doctor.name} - ${doctor.department}`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading doctors for reschedule:', error);
+            }
+        }
+        
+        // Load time slots for reschedule
+        async function loadRescheduleTimeSlots() {
+            const doctorId = document.getElementById('rescheduleDoctor').value;
+            const date = document.getElementById('rescheduleDate').value;
+            const timeSelect = document.getElementById('rescheduleTime');
+            
+            if (!doctorId || !date) {
+                timeSelect.innerHTML = '<option value="">Select date and doctor first</option>';
+                timeSelect.disabled = true;
+                return;
+            }
+            
+            timeSelect.innerHTML = '<option value="">Loading available slots...</option>';
+            timeSelect.disabled = true;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/doctors/${doctorId}/slots/${date}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    timeSelect.innerHTML = '';
+                    
+                    if (result.availableSlots.length === 0) {
+                        timeSelect.innerHTML = '<option value="">No slots available for this date</option>';
+                        timeSelect.disabled = true;
+                    } else {
+                        timeSelect.innerHTML = '<option value="">Select a time slot</option>';
+                        
+                        result.availableSlots.forEach(slot => {
+                            const option = document.createElement('option');
+                            option.value = slot;
+                            option.textContent = formatTime(slot);
+                            timeSelect.appendChild(option);
+                        });
+                        
+                        timeSelect.disabled = false;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading time slots:', error);
+                timeSelect.innerHTML = '<option value="">Error loading slots</option>';
+                timeSelect.disabled = true;
+            }
+        }
+        
+        // Handle reschedule form submission
+        async function handleReschedule(bookingId, form) {
+            const formData = new FormData(form);
+            const rescheduleData = {
+                doctorId: formData.get('doctorId'),
+                appointmentDate: formData.get('appointmentDate'),
+                appointmentTime: formData.get('appointmentTime')
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/bookings/${bookingId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(rescheduleData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Appointment rescheduled successfully', 'success');
+                    closeRescheduleModal();
+                    loadBookings(); // Refresh bookings list
+                } else {
+                    throw new Error(result.message || 'Failed to reschedule appointment');
+                }
+            } catch (error) {
+                console.error('Error rescheduling appointment:', error);
+                showNotification('Error rescheduling appointment: ' + error.message, 'error');
+            }
+        }
+        
+        // Toggle doctor status (activate/deactivate)
+        async function toggleDoctorStatus(doctorId, newStatus) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/doctors/${doctorId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ is_active: newStatus })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(`Doctor ${newStatus ? 'activated' : 'deactivated'} successfully`, 'success');
+                    loadDoctors();
+                    // Refresh the booking widget's doctor list by triggering a custom event
+                    window.dispatchEvent(new CustomEvent('doctorStatusChanged'));
+                } else {
+                    throw new Error(result.message || 'Failed to update doctor status');
+                }
+            } catch (error) {
+                console.error('Error updating doctor status:', error);
+                showNotification('Error updating doctor status: ' + error.message, 'error');
+            }
+        }
+        
+        // Delete doctor
+        async function deleteDoctor(doctorId, doctorName) {
+            // Show confirmation dialog
+            const confirmed = confirm(`Are you sure you want to delete Dr. ${doctorName}?\n\nThis action cannot be undone and will affect all associated bookings.`);
+            
+            if (!confirmed) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/doctors/${doctorId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(`Dr. ${doctorName} deleted successfully`, 'success');
+                    loadDoctors();
+                    // Refresh the booking widget's doctor list
+                    window.dispatchEvent(new CustomEvent('doctorDeleted'));
+                } else {
+                    throw new Error(result.message || 'Failed to delete doctor');
+                }
+            } catch (error) {
+                console.error('Error deleting doctor:', error);
+                showNotification('Error deleting doctor: ' + error.message, 'error');
+            }
         }
         
         // Close modal

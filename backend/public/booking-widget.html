@@ -501,16 +501,35 @@
             }
         }
         
+        // Listen for doctor status changes from admin panel
+        window.addEventListener('doctorStatusChanged', function() {
+            loadDoctors();
+        });
+        
+        // Listen for doctor deletions from admin panel
+        window.addEventListener('doctorDeleted', function() {
+            loadDoctors();
+        });
+        
         // Populate doctor dropdown
         function populateDoctorSelect() {
             doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
             
-            doctors.forEach(doctor => {
+            // Only show active doctors
+            doctors.filter(doctor => doctor.is_active === 1).forEach(doctor => {
                 const option = document.createElement('option');
                 option.value = doctor.id;
                 option.textContent = `${doctor.name} - ${doctor.department}`;
                 doctorSelect.appendChild(option);
             });
+            
+            // If no active doctors, show message
+            if (doctors.filter(doctor => doctor.is_active === 1).length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No doctors available at the moment';
+                doctorSelect.appendChild(option);
+            }
         }
         
         // Load available time slots when doctor and date are selected

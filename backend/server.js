@@ -128,7 +128,7 @@ db.serialize(() => {
 });
 
 // Email configuration
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransporter({
     host: 'smtp.gmail.com',
     port: 587,
     secure: false,
@@ -199,6 +199,48 @@ app.put('/api/doctors/:id', (req, res) => {
                 return res.status(500).json({ success: false, message: 'Error updating doctor' });
             }
             res.json({ success: true });
+        }
+    );
+});
+
+// Delete doctor
+app.delete('/api/doctors/:id', (req, res) => {
+    const { id } = req.params;
+    
+    // First check if doctor has any bookings
+    db.get(
+        'SELECT COUNT(*) as count FROM bookings WHERE doctor_id = ? AND status != "cancelled"',
+        [id],
+        (err, result) => {
+            if (err) {
+                console.error('Error checking doctor bookings:', err);
+                return res.status(500).json({ success: false, message: 'Error checking doctor bookings' });
+            }
+            
+            if (result.count > 0) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: `Cannot delete doctor. There are ${result.count} active bookings associated with this doctor. Please cancel or complete these bookings first.` 
+                });
+            }
+            
+            // Delete doctor if no active bookings
+            db.run('DELETE FROM doctors WHERE id = ?', [id], function(err) {
+                if (err) {
+                    console.error('Error deleting doctor:', err);
+                    return res.status(500).json({ success: false, message: 'Error deleting doctor' });
+                }
+                
+                if (this.changes === 0) {
+                    return res.status(404).json({ success: false, message: 'Doctor not found' });
+                }
+                
+                // Also delete related availability and blocked dates
+                db.run('DELETE FROM doctor_availability WHERE doctor_id = ?', [id]);
+                db.run('DELETE FROM doctor_blocked_dates WHERE doctor_id = ?', [id]);
+                
+                res.json({ success: true, message: 'Doctor deleted successfully' });
+            });
         }
     );
 });
