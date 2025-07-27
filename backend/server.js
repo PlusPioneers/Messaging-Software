@@ -128,13 +128,13 @@ db.serialize(() => {
 });
 
 // Email configuration
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransporter({
     host: 'smtp.gmail.com',
     port: 587,
     secure: false,
     auth: {
-        user: 'essstellers@gmail.com',
-        pass: 'thahir2005@'
+        user: process.env.EMAIL_USER || 'your-email@gmail.com',
+        pass: process.env.EMAIL_PASS || 'your-app-password'
     }
 });
 
@@ -478,7 +478,7 @@ app.post('/api/bookings', (req, res) => {
                         // Send confirmation email if email provided
                         if (patientEmail) {
                             const mailOptions = {
-                                from: 'essstellers@gmail.com',
+                                from: process.env.EMAIL_USER || 'your-email@gmail.com',
                                 to: patientEmail,
                                 subject: 'Appointment Confirmation',
                                 html: `
@@ -883,7 +883,7 @@ app.put('/api/bookings/:id/reschedule', (req, res) => {
                                 const doctorName = doctor ? doctor.name : 'Unknown Doctor';
                                 
                                 const mailOptions = {
-                                    from: 'essstellers@gmail.com',
+                                    from: process.env.EMAIL_USER || 'your-email@gmail.com',
                                     to: booking.patient_email,
                                     subject: 'Appointment Rescheduled',
                                     html: `
